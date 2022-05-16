@@ -66,8 +66,8 @@ module.exports = {
       less: {
         modifyVars: {
           /* less 变量覆盖，用于自定义 ant design 主题 */
-          'primary-color': '#1890FF',
-          'link-color': '#1890FF',
+          'primary-color': '#2F54EB',
+          'link-color': '#2F54EB',
           'border-radius-base': '4px',
           dark: true, // 开启暗黑模式
         },

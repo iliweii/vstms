@@ -21,7 +21,7 @@
     props: {
       title: {
         type: String,
-        default: 'Jeecg-Boot Pro',
+        default: '培训管理系统',
         required: false
       },
       showTitle: {

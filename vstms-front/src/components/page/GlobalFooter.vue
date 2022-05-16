@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <div class="links">
+    <div class="links" v-if="false">
       <a href="http://www.jeecg.com" target="_blank">JEECG 首页</a>
       <a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">
         <a-icon type="github"/>
@@ -11,7 +11,7 @@
     <div class="copyright">
       Copyright
       <a-icon type="copyright"/>
-      2019 <span>JEECG开源社区 出品</span>
+      2022 <span>计算机科学与技术学院 李威</span>
     </div>
   </div>
 </template>

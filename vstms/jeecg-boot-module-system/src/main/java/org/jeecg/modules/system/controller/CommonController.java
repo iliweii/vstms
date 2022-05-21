@@ -10,6 +10,8 @@ import org.jeecg.common.util.CommonUtils;
 import org.jeecg.common.util.RestUtil;
 import org.jeecg.common.util.TokenUtils;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.upload.entity.UploadFile;
+import org.jeecg.modules.upload.service.IUploadFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +45,8 @@ public class CommonController {
 
     @Autowired
     private ISysBaseAPI sysBaseAPI;
+    @Autowired
+    private IUploadFileService iUploadFileService;
 
     @Value(value = "${jeecg.path.upload}")
     private String uploadpath;
@@ -149,6 +153,11 @@ public class CommonController {
             if (dbpath.contains("\\")) {
                 dbpath = dbpath.replace("\\", "/");
             }
+            //保存到upload_file
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setFilePath(dbpath);
+            uploadFile.setFileName(mf.getOriginalFilename());
+            iUploadFileService.save(uploadFile);
             return dbpath;
         } catch (IOException e) {
             log.error(e.getMessage(), e);

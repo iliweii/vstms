@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.upload.mapper.UploadFileMapper">
+    <select id="selectPageByCode" resultType="org.jeecg.modules.upload.vo.UploadFileVO">
+        SELECT *
+        FROM (
+            SELECT *
+            FROM `upload_file`
+            LEFT JOIN(
+                SELECT `sys_dict_item`.`item_text` AS file_type_name, `sys_dict_item`.`item_value`
+                FROM `sys_dict`, `sys_dict_item`
+                WHERE `sys_dict`.`dict_code` LIKE #{code}
+                AND `sys_dict`.`id` LIKE `sys_dict_item`.`dict_id`) dict
+                ON `upload_file`.`file_type` LIKE dict.`item_value`
+         ) t
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectPageByContractId" resultType="org.jeecg.modules.upload.entity.UploadFile">
+        SELECT * FROM (
+            SELECT * FROM `upload_file`
+            LEFT JOIN(
+                SELECT `sys_dict_item`.`item_text` AS file_type_name, `sys_dict_item`.`item_value`
+                FROM `sys_dict`, `sys_dict_item`
+                WHERE `sys_dict`.`dict_code` LIKE #{code}
+                AND `sys_dict`.`id` LIKE `sys_dict_item`.`dict_id`
+            ) dict ON `upload_file`.`file_type` LIKE dict.`item_value`
+            WHERE object_id IN (
+                -- 年度计划
+                SELECT id FROM contract_annual_plan
+                WHERE no = ( SELECT contract_annual_plan_no FROM contract_apply WHERE id = #{id} )
+                UNION
+                -- 招标申请
+                SELECT id FROM contract_tender_apply
+                WHERE id = ( SELECT tender_id FROM contract_apply WHERE id = #{id} )
+                UNION
+                -- 评委维护
+                SELECT id FROM contract_tender_expert
+                WHERE tender_id = ( SELECT tender_id FROM contract_apply WHERE id = #{id} )
+                UNION
+                -- 招标结果
+                SELECT id FROM contract_tender_result
+                WHERE tender_id = ( SELECT tender_id FROM contract_apply WHERE id = #{id} )
+                UNION
+                -- 合同申请
+                SELECT #{id} id
+                UNION
+                -- 合同签订
+                SELECT id FROM contract_apply_signed
+                WHERE contract_id = #{id}
+                UNION
+                -- 合同支付
+                SELECT id FROM contract_pay
+                WHERE contract_id = #{id}
+                UNION
+                -- 合同主体审查
+                SELECT id FROM contract_tender_subject
+                WHERE tender_id = ( SELECT tender_id FROM contract_apply WHERE id = #{id} )
+                UNION
+                -- 合同保函
+                SELECT id FROM contract_deposit
+                WHERE contract_id = #{id}
+                UNION
+                -- 合同退还
+                SELECT id FROM contract_deposit_return
+                WHERE contract_id = #{id}
+                UNION
+                -- 合同履约
+                SELECT id FROM contract_fulfill
+                WHERE contract_id = #{id}
+                UNION
+                -- 补充协议
+                SELECT id FROM contract_apply
+                WHERE oid = #{id}
+            )
+            -- 过滤已添加的
+            AND file_path NOT IN (
+                SELECT file_path FROM upload_file
+                WHERE object_id = #{objId}
+            )
+        ) t ${ew.customSqlSegment}
+    </select>
+
+</mapper>

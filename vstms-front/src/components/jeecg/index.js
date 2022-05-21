@@ -39,6 +39,8 @@ import lodash_object from 'lodash'
 import debounce from 'lodash/debounce'
 import pick from 'lodash.pick'
 import data from 'china-area-data'
+// 附件上传
+import JFileUpload from './JFileUpload.vue'
 
 export default {
   install(Vue) {
@@ -87,5 +89,8 @@ export default {
     Vue.prototype.$Jdebounce= debounce
     Vue.prototype.$Jpick = pick
     Vue.prototype.$Jpcaa = data
+
+    // 附件上传
+    Vue.component('JFileUpload', JFileUpload)
   }
 }

@@ -192,7 +192,7 @@ export default {
         {
           dataIndex: '',
           title: '序号',
-          width: 60,
+          width: '10%',
           align: 'center',
           customRender: (t, r, index) => {
             return (this.ipagination.current - 1) * this.ipagination.pageSize + parseInt(index) + 1
@@ -203,27 +203,28 @@ export default {
           title: '附件类型',
           align: 'center',
           ellipsis: true,
-          width: 120,
+          width: '10%',
         },
         {
           dataIndex: 'fileAlias',
           title: '附件名称',
-          align: 'center',
+          align: 'left',
           ellipsis: true,
+          width: '40%'
         },
         {
           dataIndex: 'createBy_dictText',
           title: '上传人',
           align: 'center',
           ellipsis: true,
-          width: 180,
+          width: '10%',
         },
         {
           dataIndex: 'createTime',
           title: '上传时间',
           align: 'center',
           ellipsis: true,
-          width: 180,
+          width: '13%',
         },
         {
           title: '操作',

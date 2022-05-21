@@ -1,6 +1,8 @@
 package org.jeecg.common.system.base.entity;
 
 import java.io.Serializable;
+
+import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,6 +34,7 @@ public class JeecgEntity implements Serializable {
 	/** 创建人 */
 	@ApiModelProperty(value = "创建人")
 	@Excel(name = "创建人", width = 15)
+	@Dict(dicCode = "username", dictTable = "sys_user", dicText = "realname")
 	private java.lang.String createBy;
 	/** 创建时间 */
 	@ApiModelProperty(value = "创建时间")
@@ -42,6 +45,7 @@ public class JeecgEntity implements Serializable {
 	/** 更新人 */
 	@ApiModelProperty(value = "更新人")
 	@Excel(name = "更新人", width = 15)
+	@Dict(dicCode = "username", dictTable = "sys_user", dicText = "realname")
 	private java.lang.String updateBy;
 	/** 更新时间 */
 	@ApiModelProperty(value = "更新时间")

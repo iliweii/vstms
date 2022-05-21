@@ -1,5 +1,9 @@
 package org.jeecg.modules.system.controller;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +91,7 @@ public class CommonController {
                 //result.setSuccess(false);
                 //return result;
             }else{
-                bizPath = "";
+                bizPath = "other";
             }
         }
         if(CommonConstant.UPLOAD_TYPE_LOCAL.equals(uploadType)){
@@ -133,6 +137,7 @@ public class CommonController {
      */
     private String uploadLocal(MultipartFile mf,String bizPath){
         try {
+            bizPath = bizPath + File.separator +  DateUtil.formatDate(DateTime.now());
             String ctxPath = uploadpath;
             String fileName = null;
             File file = new File(ctxPath + File.separator + bizPath + File.separator );

@@ -5,7 +5,7 @@
       <a-col :md="24" :sm="24">
         <a-form-item :label="label" :label-col="labelColumn" :wrapper-col="wrapperColumn">
           <!-- 按钮 -->
-          <a @click="() => this.open()" type="primary" :disabled="disabled">{{ text }}</a>
+          <a-button @click="() => this.open()" type="primary" :disabled="disabled">{{ text }}</a-button>
           <span style="color: red; display: inline-block; margin-left: 10px">{{ fileText }}</span>
           <!-- 列表 -->
           <a-table
@@ -29,6 +29,10 @@
               <a @click="handleDelete(record.id)" v-if="record.createBy == userInfo().username" :disabled="disabled"
                 >删除</a
               >
+              <span v-for="op in extra" :key="op.emit">
+                <a-divider type="vertical" />
+                <a @click="() => $emit(op.emit)">{{op.name}}</a>
+              </span>
             </span>
           </a-table>
         </a-form-item>
@@ -50,7 +54,6 @@
         <a-form :form="form" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
           <a-form-item prop="fileType" required label="附件分类">
             <j-search-select-tag
-              size="small"
               v-decorator="['fileType', validatorRules.fileType]"
               :triggerChange="true"
               placeholder="请选择附件分类"
@@ -63,7 +66,6 @@
               placeholder="请输入附件别名"
               v-decorator="['fileAlias', validatorRules.fileAlias]"
               :triggerChange="true"
-              size="small"
             />
           </a-form-item> -->
           <a-form-item prop="file" required label="上传附件" validate-status="error" help="">
@@ -74,7 +76,6 @@
               fileType="file"
               :params="{ biz: 'temp' }"
               @change="fileChange"
-              size="small"
             ></j-upload>
           </a-form-item>
         </a-form>
@@ -159,6 +160,11 @@ export default {
       required: false,
       default: false,
     },
+    extra: {
+      type: Array,
+      required: false,
+      default: () => ([]),
+    },
     businessType: String,
     objectId: String,
   },
@@ -197,26 +203,27 @@ export default {
           title: '附件类型',
           align: 'center',
           ellipsis: true,
+          width: 120,
         },
         {
           dataIndex: 'fileAlias',
           title: '附件名称',
           align: 'center',
           ellipsis: true,
-          width: 300,
         },
         {
           dataIndex: 'createBy_dictText',
           title: '上传人',
           align: 'center',
           ellipsis: true,
+          width: 180,
         },
         {
           dataIndex: 'createTime',
           title: '上传时间',
           align: 'center',
           ellipsis: true,
-          width: 140,
+          width: 180,
         },
         {
           title: '操作',
@@ -224,7 +231,7 @@ export default {
           fixed: 'right',
           scopedSlots: { customRender: 'action' },
           align: 'center',
-          width: 120,
+          width: 240,
         },
       ],
       url: {

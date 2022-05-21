@@ -71,6 +71,11 @@ export const JeecgListMixin = {
     }
   },
   methods:{
+    changeRowColor(record, index) {
+      let className = 'once'
+      if (index % 2 === 1) className = 'twoe'
+      return className
+    },
     loadData(arg) {
       if(!this.url.list){
         this.$message.error("请设置url.list属性!")

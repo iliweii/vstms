@@ -31,7 +31,7 @@
               >
               <span v-for="op in extra" :key="op.emit">
                 <a-divider type="vertical" />
-                <a @click="() => $emit(op.emit)">{{op.name}}</a>
+                <a @click="() => $emit(op.emit, record)">{{op.name}}</a>
               </span>
             </span>
           </a-table>

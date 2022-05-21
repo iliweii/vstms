@@ -81,7 +81,7 @@ public class UploadFileController extends JeecgController<UploadFile, IUploadFil
         }
         uploadFile.setId(uploadFileQuery.getId());
         LoginUser loginUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        uploadFile.setSysOrgCode(loginUser.getSysCommunityCode());
+        uploadFile.setSysOrgCode(loginUser.getOrgCode());
         uploadFileService.updateById(uploadFile);
         return Result.OK("编辑成功!");
     }
@@ -98,7 +98,7 @@ public class UploadFileController extends JeecgController<UploadFile, IUploadFil
             UploadFile uploadFileQuery = uploadFileService.lambdaQuery()
                     .eq(UploadFile::getFilePath, file.getFilePath()).one();
             file.setId(uploadFileQuery.getId());
-            file.setSysOrgCode(loginUser.getSysCommunityCode());
+            file.setSysOrgCode(loginUser.getOrgCode());
             if (!StringUtils.isEmpty(uploadFile.getBusinessType())) file.setBusinessType(uploadFile.getBusinessType());
             if (!StringUtils.isEmpty(uploadFile.getFileType())) file.setFileType(uploadFile.getFileType());
             if (!StringUtils.isEmpty(uploadFile.getObjectId())) file.setObjectId(uploadFile.getObjectId());
@@ -127,28 +127,6 @@ public class UploadFileController extends JeecgController<UploadFile, IUploadFil
     public Result<?> queryById(@RequestParam(name = "id", required = true) String id) {
         UploadFile uploadFile = uploadFileService.getById(id);
         return Result.OK(uploadFile);
-    }
-
-
-    @AutoLog(value = "附件管理-根据合同id查询合同相关附件列表")
-    @ApiOperation(value = "附件管理-根据合同id查询合同相关附件列表", notes = "附件管理-根据合同id查询合同相关附件列表<br/>" +
-            "附件包括：年度计划，招标申请，评委维护，招标结果，合同申请，合同签订，合同支付，合同主体审查，合同保函，合同退还，合同履约，补充协议的附件；")
-    @GetMapping(value = "/listByContractId")
-    public Result<?> listByContractId(UploadFile uploadFile,
-                                      @RequestParam(name = "contId", defaultValue = "1") String contractId,
-                                      @RequestParam(name = "objId", defaultValue = "1") String objId,
-                                      @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                      @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                      HttpServletRequest req) {
-        LoginUser loginUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        uploadFile.setSysOrgCode(loginUser.getSysCommunityCode());
-        QueryWrapper<UploadFile> queryWrapper = QueryGenerator.initQueryWrapper(uploadFile, req.getParameterMap());
-        Page<UploadFile> page = new Page<UploadFile>(pageNo, pageSize);
-        // 这里使用ObjectId临时存储合同id， 使用FileTypeName临时存储归档id
-        uploadFile.setObjectId(contractId);
-        uploadFile.setFileTypeName(objId);
-        IPage<UploadFile> pageList = uploadFileService.pageByContractId(page, queryWrapper, uploadFile);
-        return Result.OK(pageList);
     }
 
     @AutoLog(value = "附件管理-复制文件到某个业务类型")

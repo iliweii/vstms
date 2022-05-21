@@ -109,6 +109,11 @@ public class CommonController {
             //update-begin-author:taoyan date:20200814 for:文件上传改造
             savePath = CommonUtils.upload(file, bizPath, uploadType);
             //update-end-author:taoyan date:20200814 for:文件上传改造
+            //保存到upload_file
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setFilePath(savePath);
+            uploadFile.setFileName(file.getName());
+            iUploadFileService.save(uploadFile);
         }
         if(oConvertUtils.isNotEmpty(savePath)){
             result.setMessage(savePath);

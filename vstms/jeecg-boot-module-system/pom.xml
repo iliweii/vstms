@@ -34,6 +34,11 @@
 			<groupId>org.jeecgframework.boot</groupId>
 			<artifactId>jeecg-system-local-api</artifactId>
 		</dependency>
+		<!-- redis锁 -->
+		<dependency>
+			<groupId>org.jeecgframework.boot</groupId>
+			<artifactId>jeecg-boot-starter-lock</artifactId>
+		</dependency>
 		<!-- jeewx api -->
 		<dependency>
 			<groupId>org.jeecgframework</groupId>

@@ -12,6 +12,7 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.training.entity.TrainingReceive;
 import org.jeecg.modules.training.service.ITrainingReceiveService;
+import org.jeecg.modules.training.vo.TrainingReceiveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,13 +47,13 @@ public class TrainingReceiveController extends JeecgController<TrainingReceive, 
     @AutoLog(value = "资料领取-分页列表查询")
     @ApiOperation(value = "资料领取-分页列表查询", notes = "资料领取-分页列表查询")
     @GetMapping(value = "/list")
-    public Result<?> queryPageList(TrainingReceive trainingReceive,
+    public Result<?> queryPageList(TrainingReceiveVO trainingReceive,
                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                    HttpServletRequest req) {
-        QueryWrapper<TrainingReceive> queryWrapper = QueryGenerator.initQueryWrapper(trainingReceive, req.getParameterMap());
-        Page<TrainingReceive> page = new Page<TrainingReceive>(pageNo, pageSize);
-        IPage<TrainingReceive> pageList = trainingReceiveService.page(page, queryWrapper);
+        QueryWrapper<TrainingReceiveVO> queryWrapper = QueryGenerator.initQueryWrapper(trainingReceive, req.getParameterMap());
+        Page<TrainingReceiveVO> page = new Page<TrainingReceiveVO>(pageNo, pageSize);
+        IPage<TrainingReceiveVO> pageList = trainingReceiveService.page(page, queryWrapper);
         return Result.OK(pageList);
     }
 

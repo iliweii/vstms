@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.training.mapper.TrainingReceiveMapper">
 
+    <select id="selectPage" resultType="org.jeecg.modules.training.vo.TrainingReceiveVO">
+        SELECT *
+        FROM (
+            SELECT IFNULL(r.id, s.id) id, s.class_no, s.username, u.avatar, IFNULL(r.`status`, '0') `status`, r.create_by, r.create_time
+            FROM `training_class_student` s
+            LEFT JOIN training_receive r ON r.class_no = s.class_no AND r.username = s.username
+            LEFT JOIN sys_user u ON u.username = s.username
+        ) t ${ew.customSqlSegment}
+    </select>
+
 </mapper>

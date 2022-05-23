@@ -15,10 +15,8 @@ import org.jeecg.modules.training.service.ITrainingClassTeacherService;
 import org.jeecg.modules.training.vo.TrainingLinkModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 /**
@@ -60,15 +58,35 @@ public class TrainingClassTeacherController extends JeecgController<TrainingClas
     /**
      * 编辑
      *
-     * @param trainingLinkModel
+     * @param trainingClassTeacher
      * @return
      */
     @AutoLog(value = "培训班教师关系-编辑")
     @ApiOperation(value = "培训班教师关系-编辑", notes = "培训班教师关系-编辑")
     @PutMapping(value = "/edit")
-    public Result<?> edit(@RequestBody TrainingLinkModel trainingLinkModel) {
-        trainingClassTeacherService.edit(trainingLinkModel);
+    public Result<?> edit(@RequestBody TrainingClassTeacher trainingClassTeacher) {
+        TrainingClassTeacher teacherQuery = this.trainingClassTeacherService.getById(trainingClassTeacher.getId());
+        if ("0".equals(teacherQuery.getIsHead()) && "1".equals(trainingClassTeacher.getIsHead())) {
+            // 其他的均设为非班主任
+            this.trainingClassTeacherService.lambdaUpdate().eq(TrainingClassTeacher::getClassNo, teacherQuery.getClassNo())
+                    .set(TrainingClassTeacher::getIsHead, "0").update();
+        }
+        trainingClassTeacherService.updateById(trainingClassTeacher);
         return Result.OK("编辑成功!");
+    }
+
+    /**
+     * 关联
+     *
+     * @param trainingLinkModel
+     * @return
+     */
+    @AutoLog(value = "培训班教师关系-关联")
+    @ApiOperation(value = "培训班教师关系-关联", notes = "培训班教师关系-关联")
+    @PutMapping(value = "/link")
+    public Result<?> link(@RequestBody TrainingLinkModel trainingLinkModel) {
+        trainingClassTeacherService.edit(trainingLinkModel);
+        return Result.OK("关联成功!");
     }
 
     /**

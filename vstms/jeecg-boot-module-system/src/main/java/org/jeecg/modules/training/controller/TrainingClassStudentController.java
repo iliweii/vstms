@@ -114,15 +114,29 @@ public class TrainingClassStudentController extends JeecgController<TrainingClas
     /**
      * 编辑
      *
-     * @param trainingLinkModel
+     * @param trainingClassStudent
      * @return
      */
     @AutoLog(value = "培训班学生关系-编辑")
     @ApiOperation(value = "培训班学生关系-编辑", notes = "培训班学生关系-编辑")
     @PutMapping(value = "/edit")
-    public Result<?> edit(@RequestBody TrainingLinkModel trainingLinkModel) {
-        trainingClassStudentService.edit(trainingLinkModel);
+    public Result<?> edit(@RequestBody TrainingClassStudent trainingClassStudent) {
+        trainingClassStudentService.updateById(trainingClassStudent);
         return Result.OK("编辑成功!");
+    }
+
+    /**
+     * 关联
+     *
+     * @param trainingLinkModel
+     * @return
+     */
+    @AutoLog(value = "培训班学生关系-关联")
+    @ApiOperation(value = "培训班学生关系-关联", notes = "培训班学生关系-关联")
+    @PutMapping(value = "/link")
+    public Result<?> link(@RequestBody TrainingLinkModel trainingLinkModel) {
+        trainingClassStudentService.edit(trainingLinkModel);
+        return Result.OK("关联成功!");
     }
 
     /**

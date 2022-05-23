@@ -6,22 +6,22 @@
         <a-form layout="inline" @keyup.enter.native="searchQuery">
           <a-row :gutter="24">
             <a-col :xl="6" :lg="7" :md="8" :sm="24">
-              <a-form-item label="需求编码">
-                <j-input placeholder="请输入需求编码" v-model="queryParam.no"></j-input>
+              <a-form-item label="编号">
+                <j-input placeholder="请输入编号" v-model="queryParam.no"></j-input>
               </a-form-item>
             </a-col>
             <a-col :xl="6" :lg="7" :md="8" :sm="24">
-              <a-form-item label="需求名称">
-                <j-input placeholder="请输入需求名称" v-model="queryParam.title"></j-input>
+              <a-form-item label="名称">
+                <j-input placeholder="请输入名称" v-model="queryParam.name"></j-input>
               </a-form-item>
             </a-col>
             <a-col :xl="6" :lg="7" :md="8" :sm="24">
-              <a-form-item label="需求状态">
+              <a-form-item label="状态">
                 <j-search-select-tag
                   v-model="queryParam.status"
                   :triggerChange="true"
-                  placeholder="请选择需求状态"
-                  dict="research_req_status"
+                  placeholder="请选择状态"
+                  dict="training_class_status"
                   :disabled="false"
                 />
               </a-form-item>
@@ -36,16 +36,16 @@
                 </a>
               </span>
             </a-col>
-          </a-row>
 
-          <template v-if="toggleSearchStatus"> </template>
+            <template v-if="toggleSearchStatus"> </template>
+          </a-row>
         </a-form>
       </div>
 
       <!-- 操作按钮区域 -->
       <div class="table-operator">
         <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-        <a-button type="primary" icon="download" @click="handleExportXls('需求调研')">导出</a-button>
+        <a-button type="primary" icon="download" @click="handleExportXls('培训班')">导出</a-button>
         <a-upload
           name="file"
           :showUploadList="false"
@@ -86,17 +86,26 @@
           :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
           @change="handleTableChange"
         >
-          <span slot="status" slot-scope="text, record">
-            <a-alert v-if="record.status == 0" :message="text" type="warning" />
-            <a-alert v-else-if="record.status == 5" :message="text" type="error" />
-            <a-alert v-else :message="text" type="success" />
+          <span
+            slot="teacher"
+            slot-scope="text, record"
+            :title="`培训班实际教师${record.teacherRealNum}人，预估${text}人`"
+          >
+            {{ record.teacherRealNum }}人 ({{ text }}人)
+          </span>
+          <span
+            slot="student"
+            slot-scope="text, record"
+            :title="`培训班实际学生${record.studentRealNum}人，预估${text}人`"
+          >
+            {{ record.studentRealNum }}人 ({{ text }}人)
           </span>
           <span slot="action" slot-scope="text, record">
             <a v-if="record.status == 0" @click="handleEdit(record)">编辑</a>
             <a v-else @click="handleDetail(record)">详情</a>
 
             <a-divider type="vertical" />
-            <a :disabled="record.status == 0" @click="handleBaseDetail(record)">需求调研</a>
+            <a :disabled="record.status == 0" @click="handleBaseDetail(record)">信息录入</a>
 
             <a-divider type="vertical" />
             <a-dropdown>
@@ -110,8 +119,8 @@
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
-                <a-menu-item v-if="record.status > 0 && record.status < 5">
-                  <a-popconfirm title="确定禁用需求吗?" @confirm="() => handleDisable(record.id)">
+                <a-menu-item v-if="record.status > 0 && record.status < 3">
+                  <a-popconfirm title="确定禁用培训班吗?" @confirm="() => handleDisable(record.id)">
                     <a>禁用</a>
                   </a-popconfirm>
                 </a-menu-item>
@@ -123,8 +132,8 @@
       <!-- table区域-end -->
 
       <!-- 表单区域 -->
-      <researchReq-modal ref="modalForm" @ok="modalFormOk"></researchReq-modal>
-      <research-base-modal ref="researchBaseModal" @ok="modalFormOk"></research-base-modal>
+      <trainingClass-modal ref="modalForm" @ok="modalFormOk"></trainingClass-modal>
+      <trainingClass-base-modal ref="modalBaseForm" @ok="modalFormOk"></trainingClass-base-modal>
     </a-card>
   </page-layout>
 </template>
@@ -132,23 +141,23 @@
 <script>
 import '@/assets/less/TableExpand.less'
 import PageLayout from '@/components/page/PageLayout'
-import ResearchReqModal from './modules/ResearchReqModal'
-import ResearchBaseModal from './modules/ResearchBaseModal'
+import TrainingClassModal from './modules/TrainingClassModal'
+import TrainingClassBaseModal from './modules/TrainingClassBaseModal.vue'
 import { putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 export default {
-  name: 'ResearchReqList',
+  name: 'TrainingClassList',
   mixins: [JeecgListMixin],
   components: {
     PageLayout,
-    ResearchReqModal,
-    ResearchBaseModal,
+    TrainingClassModal,
+    TrainingClassBaseModal,
   },
   data() {
     return {
-      description: '需求调研管理页面',
-      title: '需求调研',
+      description: '培训班管理页面',
+      title: '培训班基本信息维护',
       // 表头
       columns: [
         {
@@ -162,56 +171,56 @@ export default {
           },
         },
         {
-          title: '需求编码',
+          title: '编号',
           align: 'center',
           dataIndex: 'no',
-          ellipsis: true,
-          width: 220,
         },
         {
-          title: '需求名称',
+          title: '名称',
           align: 'center',
-          dataIndex: 'title',
-          ellipsis: true,
+          dataIndex: 'name',
         },
         {
-          title: '需求状态',
+          title: '课时',
+          align: 'center',
+          dataIndex: 'period',
+        },
+        {
+          title: '价格(元)',
+          align: 'center',
+          dataIndex: 'price',
+        },
+        {
+          title: '教师数量',
+          align: 'center',
+          dataIndex: 'teacherNum',
+          scopedSlots: { customRender: 'teacher' },
+        },
+        {
+          title: '学生数量',
+          align: 'center',
+          dataIndex: 'studentNum',
+          scopedSlots: { customRender: 'student' },
+        },
+        {
+          title: '状态',
           align: 'center',
           dataIndex: 'status_dictText',
-          scopedSlots: { customRender: 'status' },
-          ellipsis: true,
-          width: 120,
-        },
-        {
-          title: '创建人',
-          align: 'center',
-          dataIndex: 'createBy_dictText',
-          ellipsis: true,
-          width: 120,
-        },
-        {
-          title: '创建时间',
-          align: 'center',
-          dataIndex: 'createTime',
-          sorter: true,
-          ellipsis: true,
-          width: 120,
         },
         {
           title: '操作',
           dataIndex: 'action',
           align: 'center',
           scopedSlots: { customRender: 'action' },
-          width: 240,
         },
       ],
       url: {
-        list: '/research/researchReq/list',
-        edit: '/research/researchReq/edit',
-        delete: '/research/researchReq/delete',
-        deleteBatch: '/research/researchReq/deleteBatch',
-        exportXlsUrl: 'research/researchReq/exportXls',
-        importExcelUrl: 'research/researchReq/importExcel',
+        list: '/training/trainingClass/list',
+        edit: '/training/trainingClass/edit',
+        delete: '/training/trainingClass/delete',
+        deleteBatch: '/training/trainingClass/deleteBatch',
+        exportXlsUrl: 'training/trainingClass/exportXls',
+        importExcelUrl: 'training/trainingClass/importExcel',
       },
     }
   },
@@ -230,15 +239,15 @@ export default {
     },
     handleDisable(id) {
       const that = this
-      putAction(that.url.edit, { id, status: 5 }).then((res) => {
+      putAction(that.url.edit, { id, status: 3 }).then((res) => {
         that.$message.success('禁用成功')
         that.loadData()
       })
     },
     handleBaseDetail(record) {
-      this.$refs.researchBaseModal.edit(record)
-      this.$refs.researchBaseModal.title = '需求调研'
-      this.$refs.researchBaseModal.disableSubmit = true
+      this.$refs.modalBaseForm.edit(record)
+      this.$refs.modalBaseForm.title = '培训班信息录入'
+      this.$refs.modalBaseForm.disableSubmit = true
     },
   },
 }

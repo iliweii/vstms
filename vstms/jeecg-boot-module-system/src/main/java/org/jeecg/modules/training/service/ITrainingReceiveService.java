@@ -23,4 +23,11 @@ public interface ITrainingReceiveService extends IService<TrainingReceive> {
      */
     IPage<TrainingReceiveVO> page(Page<TrainingReceiveVO> page, QueryWrapper<TrainingReceiveVO> queryWrapper);
 
+    /**
+     * 编辑
+     *
+     * @param trainingReceive
+     */
+    void edit(TrainingReceive trainingReceive);
+
 }

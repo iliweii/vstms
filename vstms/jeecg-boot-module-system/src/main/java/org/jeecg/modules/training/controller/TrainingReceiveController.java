@@ -15,11 +15,8 @@ import org.jeecg.modules.training.service.ITrainingReceiveService;
 import org.jeecg.modules.training.vo.TrainingReceiveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 /**
  * @Description: 资料领取
@@ -58,20 +55,6 @@ public class TrainingReceiveController extends JeecgController<TrainingReceive, 
     }
 
     /**
-     * 添加
-     *
-     * @param trainingReceive
-     * @return
-     */
-    @AutoLog(value = "资料领取-添加")
-    @ApiOperation(value = "资料领取-添加", notes = "资料领取-添加")
-    @PostMapping(value = "/add")
-    public Result<?> add(@RequestBody TrainingReceive trainingReceive) {
-        trainingReceiveService.save(trainingReceive);
-        return Result.OK("添加成功！");
-    }
-
-    /**
      * 编辑
      *
      * @param trainingReceive
@@ -81,73 +64,8 @@ public class TrainingReceiveController extends JeecgController<TrainingReceive, 
     @ApiOperation(value = "资料领取-编辑", notes = "资料领取-编辑")
     @PutMapping(value = "/edit")
     public Result<?> edit(@RequestBody TrainingReceive trainingReceive) {
-        trainingReceiveService.updateById(trainingReceive);
+        trainingReceiveService.edit(trainingReceive);
         return Result.OK("编辑成功!");
-    }
-
-    /**
-     * 通过id删除
-     *
-     * @param id
-     * @return
-     */
-    @AutoLog(value = "资料领取-通过id删除")
-    @ApiOperation(value = "资料领取-通过id删除", notes = "资料领取-通过id删除")
-    @DeleteMapping(value = "/delete")
-    public Result<?> delete(@RequestParam(name = "id", required = true) String id) {
-        trainingReceiveService.removeById(id);
-        return Result.OK("删除成功!");
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @AutoLog(value = "资料领取-批量删除")
-    @ApiOperation(value = "资料领取-批量删除", notes = "资料领取-批量删除")
-    @DeleteMapping(value = "/deleteBatch")
-    public Result<?> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
-        this.trainingReceiveService.removeByIds(Arrays.asList(ids.split(",")));
-        return Result.OK("批量删除成功！");
-    }
-
-    /**
-     * 通过id查询
-     *
-     * @param id
-     * @return
-     */
-    @AutoLog(value = "资料领取-通过id查询")
-    @ApiOperation(value = "资料领取-通过id查询", notes = "资料领取-通过id查询")
-    @GetMapping(value = "/queryById")
-    public Result<?> queryById(@RequestParam(name = "id", required = true) String id) {
-        TrainingReceive trainingReceive = trainingReceiveService.getById(id);
-        return Result.OK(trainingReceive);
-    }
-
-    /**
-     * 导出excel
-     *
-     * @param request
-     * @param trainingReceive
-     */
-    @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, TrainingReceive trainingReceive) {
-        return super.exportXls(request, trainingReceive, TrainingReceive.class, "资料领取");
-    }
-
-    /**
-     * 通过excel导入数据
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, TrainingReceive.class);
     }
 
 }

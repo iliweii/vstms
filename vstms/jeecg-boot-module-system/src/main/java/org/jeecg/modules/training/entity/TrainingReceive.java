@@ -30,6 +30,7 @@ public class TrainingReceive extends JeecgEntity {
 	/**用户名*/
 	@Excel(name = "用户名", width = 15)
     @ApiModelProperty(value = "用户名")
+	@Dict(dicCode = "username", dictTable = "sys_user", dicText = "realname")
 	private java.lang.String username;
 	/**领取状态 0未领 1已领*/
 	@Excel(name = "领取状态 0未领 1已领", width = 15)

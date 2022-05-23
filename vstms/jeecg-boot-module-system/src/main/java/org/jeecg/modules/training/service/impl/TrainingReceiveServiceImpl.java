@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jeecg.modules.training.entity.TrainingReceive;
 import org.jeecg.modules.training.mapper.TrainingReceiveMapper;
 import org.jeecg.modules.training.service.ITrainingReceiveService;
@@ -28,5 +29,21 @@ public class TrainingReceiveServiceImpl extends ServiceImpl<TrainingReceiveMappe
     @Override
     public IPage<TrainingReceiveVO> page(Page<TrainingReceiveVO> page, QueryWrapper<TrainingReceiveVO> queryWrapper) {
         return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public void edit(TrainingReceive trainingReceive) {
+        // 根据培训班编码 和 用户确定一条数据
+        TrainingReceive receiveQuery = this.lambdaQuery().eq(TrainingReceive::getClassNo, trainingReceive.getClassNo())
+                .eq(TrainingReceive::getUsername, trainingReceive.getUsername()).one();
+        if (ObjectUtils.isNotEmpty(receiveQuery)) {
+            // 编辑
+            trainingReceive.setId(receiveQuery.getId());
+            this.updateById(trainingReceive);
+        } else {
+            // 新增
+            trainingReceive.setId(null);
+            this.save(trainingReceive);
+        }
     }
 }

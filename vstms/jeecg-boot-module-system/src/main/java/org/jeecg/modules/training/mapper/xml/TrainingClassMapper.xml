@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.training.mapper.TrainingClassMapper">
+
+    <select id="selectPage" resultType="org.jeecg.modules.training.vo.TrainingClassVO">
+        SELECT *
+        FROM (
+                 SELECT clz.*, IFNULL(t.num, 0) teacher_real_num, IFNULL(s.num, 0) student_real_num
+                 FROM `training_class` clz
+                          LEFT JOIN (
+                     SELECT class_no, COUNT(id) num
+                     FROM training_class_teacher
+                     GROUP BY class_no
+                 ) t ON t.class_no = clz.no
+                          LEFT JOIN (
+                     SELECT class_no, COUNT(id) num
+                     FROM training_class_student
+                     GROUP BY class_no
+                 ) s ON s.class_no = clz.no
+             ) t ${ew.customSqlSegment}
+    </select>
+
+</mapper>

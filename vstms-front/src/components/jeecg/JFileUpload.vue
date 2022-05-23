@@ -7,6 +7,7 @@
           <!-- 按钮 -->
           <a-button @click="() => this.open()" type="primary" :disabled="disabled">{{ text }}</a-button>
           <span style="color: red; display: inline-block; margin-left: 10px">{{ fileText }}</span>
+          <div :style="{ marginTop: '10px' }"></div>
           <!-- 列表 -->
           <a-table
             ref="table"
@@ -31,7 +32,7 @@
               >
               <span v-for="op in extra" :key="op.emit">
                 <a-divider type="vertical" />
-                <a @click="() => $emit(op.emit, record)">{{op.name}}</a>
+                <a @click="() => $emit(op.emit, record)">{{ op.name }}</a>
               </span>
             </span>
           </a-table>
@@ -163,7 +164,7 @@ export default {
     extra: {
       type: Array,
       required: false,
-      default: () => ([]),
+      default: () => [],
     },
     businessType: String,
     objectId: String,
@@ -210,7 +211,7 @@ export default {
           title: '附件名称',
           align: 'left',
           ellipsis: true,
-          width: '40%'
+          width: '40%',
         },
         {
           dataIndex: 'createBy_dictText',

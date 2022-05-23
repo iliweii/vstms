@@ -156,8 +156,8 @@ export const JeecgListMixin = {
     superQuery() {
       this.$refs.superQueryModal.show();
     },
-    searchReset() {
-      this.queryParam = {}
+    searchReset(params = {}) {
+      this.queryParam = { ...params }
       this.loadData(1);
     },
     batchDel: function () {

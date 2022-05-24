@@ -9,7 +9,7 @@
           <a-input placeholder="用户名" v-model="model.username" disabled />
         </a-form-model-item>
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="admissionDate" label="入学日期">
-          <a-date-picker v-model="model.admissionDate" />
+          <a-date-picker v-model="model.admissionDate" :disabled="model.status != '0'" />
         </a-form-model-item>
       </a-form-model>
 

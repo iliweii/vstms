@@ -1,0 +1,236 @@
+<template>
+  <page-layout :title="title">
+    <a-card :bordered="false">
+      <!-- 查询区域 -->
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline" @keyup.enter.native="searchQuery">
+          <a-row :gutter="24">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="培训班" required>
+                <j-search-select-tag
+                  ref="selectTag"
+                  v-model="queryParam.classNo"
+                  :triggerChange="true"
+                  placeholder="请选择培训班"
+                  dict="training_class,name,no"
+                  :disabled="false"
+                  @change="loadData()"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
+                <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                <a @click="handleToggleSearch" style="margin-left: 8px">
+                  {{ toggleSearchStatus ? '收起' : '展开' }}
+                  <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+
+            <template v-if="toggleSearchStatus"> </template>
+          </a-row>
+        </a-form>
+      </div>
+
+      <!-- 操作按钮区域 -->
+      <div class="table-operator">
+        <!-- <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+        <a-button type="primary" icon="download" @click="handleExportXls('课程表')">导出</a-button>
+        <a-upload
+          name="file"
+          :showUploadList="false"
+          :multiple="false"
+          :headers="tokenHeader"
+          :action="importExcelUrl"
+          @change="handleImportExcel"
+        >
+          <a-button type="primary" icon="import">导入</a-button>
+        </a-upload>
+        <a-dropdown v-if="selectedRowKeys.length > 0">
+          <a-menu slot="overlay">
+            <a-menu-item key="1" @click="batchDel"><a-icon type="delete" />删除</a-menu-item>
+          </a-menu>
+          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
+        </a-dropdown> -->
+      </div>
+
+      <!-- table区域-begin -->
+      <div v-if="queryParam.classNo">
+        <a-table
+          ref="table"
+          size="middle"
+          bordered
+          rowKey="id"
+          :columns="columns"
+          :dataSource="simulation"
+          :pagination="ipagination"
+          :loading="loading"
+          class="j-table-force-nowrap"
+          @change="handleTableChange"
+        >
+          <template slot="cell" slot-scope="text, record">
+            <div @click="handleEdit(getCourseInfo(text, record.id))" class="j-cell" title="点击编辑">
+              <span v-if="getCourseInfo(text, record.id)"
+                >{{ getCourseInfo(text, record.id).courseName }} /
+                {{ getCourseInfo(text, record.id).teacher_dictText }}</span
+              >
+            </div>
+          </template>
+        </a-table>
+      </div>
+
+      <a-empty v-else description="请先选择一个培训班，再进行操作" />
+      <!-- table区域-end -->
+
+      <!-- 表单区域 -->
+      <trainingClassSchedule-modal ref="modalForm" @ok="modalFormOk"></trainingClassSchedule-modal>
+    </a-card>
+  </page-layout>
+</template>
+
+<script>
+import '@/assets/less/TableExpand.less'
+import PageLayout from '@/components/page/PageLayout'
+import TrainingClassScheduleModal from './modules/TrainingClassScheduleModal'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+
+export default {
+  name: 'TrainingClassScheduleList',
+  mixins: [JeecgListMixin],
+  components: {
+    PageLayout,
+    TrainingClassScheduleModal,
+  },
+  data() {
+    return {
+      description: '课程表管理页面',
+      title: '课程表',
+      simulation: [{ time: '上午' }, {}, {}, {}, { time: '下午' }, {}, {}, {}, { time: '晚上' }, {}],
+      // 表头
+      columns: [
+        {
+          title: '时间',
+          align: 'center',
+          width: 30,
+          dataIndex: 'time',
+          customRender: (value, row, index) => {
+            const obj = { children: value, attrs: {} }
+            if (index % 4 === 0) {
+              obj.attrs.rowSpan = 4
+            }
+            // These two are merged into above cell1
+            if (index % 4 !== 0) {
+              obj.attrs.rowSpan = 0
+            }
+            return obj
+          },
+        },
+        {
+          title: '节次',
+          dataIndex: 'id',
+          key: 'rowIndex',
+          width: 60,
+          align: 'center',
+          customRender: function (t, r, index) {
+            return parseInt(index) + 1
+          },
+        },
+        {
+          title: '星期一',
+          align: 'center',
+          dataIndex: 'Mon',
+          scopedSlots: { customRender: 'cell' },
+        },
+        {
+          title: '星期二',
+          align: 'center',
+          dataIndex: 'Tue',
+          scopedSlots: { customRender: 'cell' },
+        },
+        {
+          title: '星期三',
+          align: 'center',
+          dataIndex: 'Wed',
+          scopedSlots: { customRender: 'cell' },
+        },
+        {
+          title: '星期四',
+          align: 'center',
+          dataIndex: 'Thur',
+          scopedSlots: { customRender: 'cell' },
+        },
+        {
+          title: '星期五',
+          align: 'center',
+          dataIndex: 'Fri',
+          scopedSlots: { customRender: 'cell' },
+        },
+        {
+          title: '星期六',
+          align: 'center',
+          dataIndex: 'Sat',
+          scopedSlots: { customRender: 'cell' },
+        },
+        {
+          title: '星期日',
+          align: 'center',
+          dataIndex: 'Sun',
+          scopedSlots: { customRender: 'cell' },
+        },
+      ],
+      url: {
+        list: '/training/trainingClassSchedule/list',
+        delete: '/training/trainingClassSchedule/delete',
+        deleteBatch: '/training/trainingClassSchedule/deleteBatch',
+        exportXlsUrl: 'training/trainingClassSchedule/exportXls',
+        importExcelUrl: 'training/trainingClassSchedule/importExcel',
+      },
+    }
+  },
+  computed: {
+    importExcelUrl: function () {
+      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
+    },
+  },
+  created() {
+    this.simulation = this.simulation.map((item, index) => {
+      item.id = index + 1
+      item.Mon = 'Mon'
+      item.Tue = 'Tue'
+      item.Wed = 'Wed'
+      item.Thur = 'Thur'
+      item.Fri = 'Fri'
+      item.Sat = 'Sat'
+      item.Sun = 'Sun'
+      return item
+    })
+  },
+  methods: {
+    /**
+     * 获取课程信息
+     */
+    getCourseInfo(day, several) {
+      let a = this.dataSource.filter((x) => x.day === day && x.several === several)
+      if (a.length > 0) {
+        return a[0]
+      } else {
+        return null
+      }
+    },
+  },
+}
+</script>
+<style scoped>
+@import '~@assets/less/common.less';
+
+.j-cell {
+  width: 100%;
+}
+
+.j-cell:hover {
+  background-color: #f1f1f1;
+  transition: 400ms;
+}
+</style>

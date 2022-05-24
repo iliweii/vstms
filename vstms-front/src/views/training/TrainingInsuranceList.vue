@@ -18,12 +18,12 @@
               </a-form-item>
             </a-col>
             <a-col :xl="6" :lg="7" :md="8" :sm="24">
-              <a-form-item label="领取状态">
+              <a-form-item label="办理状态">
                 <j-search-select-tag
                   v-model="queryParam.status"
                   :triggerChange="true"
-                  placeholder="请选择领取状态"
-                  dict="training_receive_status"
+                  placeholder="请选择办理状态"
+                  dict="training_insurance_status"
                   :disabled="false"
                   @change="loadData()"
                 />
@@ -72,9 +72,13 @@
             <a-card-meta :title="item.username_dictText">
               <template slot="description">
                 <span>当前：{{ item.status_dictText }}</span>
-                <a-popconfirm title="确定标记为已领取吗?" @confirm="() => handleMark(item)" v-if="item.status == '0'">
-                  <a-button type="link" size="small">标记为已领取</a-button>
-                </a-popconfirm>
+                <a-button
+                  :type="item.status == '1' ? 'link' : 'primary'"
+                  size="small"
+                  @click="handleEdit(item)"
+                  :icon="item.status == '1' ? 'check' : null"
+                  >保险办理</a-button
+                >
               </template>
             </a-card-meta>
           </a-card>
@@ -84,6 +88,7 @@
       <!-- table区域-end -->
 
       <!-- 表单区域 -->
+      <trainingInsurance-modal ref="modalForm" @ok="modalFormOk"></trainingInsurance-modal>
     </a-card>
   </page-layout>
 </template>
@@ -91,26 +96,28 @@
 <script>
 import '@/assets/less/TableExpand.less'
 import PageLayout from '@/components/page/PageLayout'
+import TrainingInsuranceModal from './modules/TrainingInsuranceModal'
 import { putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 export default {
-  name: 'TrainingReceiveList',
+  name: 'TrainingInsuranceList',
   mixins: [JeecgListMixin],
   components: {
     PageLayout,
+    TrainingInsuranceModal,
   },
   data() {
     return {
-      description: '资料领取管理页面',
-      title: '培训班资料领取',
+      description: '保险办理管理页面',
+      title: '培训班保险办理',
       url: {
-        list: '/training/trainingReceive/list',
-        edit: '/training/trainingReceive/edit',
-        delete: '/training/trainingReceive/delete',
-        deleteBatch: '/training/trainingReceive/deleteBatch',
-        exportXlsUrl: 'training/trainingReceive/exportXls',
-        importExcelUrl: 'training/trainingReceive/importExcel',
+        list: '/training/trainingInsurance/list',
+        edit: '/training/trainingInsurance/edit',
+        delete: '/training/trainingInsurance/delete',
+        deleteBatch: '/training/trainingInsurance/deleteBatch',
+        exportXlsUrl: 'training/trainingInsurance/exportXls',
+        importExcelUrl: 'training/trainingInsurance/importExcel',
       },
       columns: [
         {
@@ -138,16 +145,7 @@ export default {
       },
     }
   },
-  methods: {
-    handleMark(item) {
-      const that = this
-      item.status = '1'
-      putAction(that.url.edit, item).then((res) => {
-        that.$message.success('操作成功')
-        that.loadData()
-      })
-    },
-  },
+  methods: {},
 }
 </script>
 <style scoped>

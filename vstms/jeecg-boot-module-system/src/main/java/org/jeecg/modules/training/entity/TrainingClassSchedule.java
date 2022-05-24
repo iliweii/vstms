@@ -30,10 +30,12 @@ public class TrainingClassSchedule  extends JeecgEntity {
 	/**星期几*/
 	@Excel(name = "星期几", width = 15)
     @ApiModelProperty(value = "星期几")
+	@Dict(dicCode = "week")
 	private java.lang.String day;
 	/**节次*/
 	@Excel(name = "节次", width = 15)
     @ApiModelProperty(value = "节次")
+	@Dict(dicCode = "class_schedule_several")
 	private java.lang.Integer several;
 	/**课程名称*/
 	@Excel(name = "课程名称", width = 15)

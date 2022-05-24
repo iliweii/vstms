@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.training.mapper.TrainingOpeningCeremonyMapper">
+
+    <select id="selectPage" resultType="org.jeecg.modules.training.entity.TrainingOpeningCeremony">
+        SELECT *
+        FROM (
+                 SELECT IFNULL(oc.id, clz.id)  id,
+                        clz.no                 class_no,
+                        oc.hold_date,
+                        oc.real_date,
+                        oc.refer_num,
+                        oc.real_num,
+                        IFNULL(oc.status, '0') status,
+                        oc.remark,
+                        clz.create_by,
+                        clz.create_time,
+                        oc.update_by,
+                        oc.update_time
+                 FROM `training_class` clz
+                          LEFT JOIN training_opening_ceremony oc ON oc.class_no = clz.no
+             ) t ${ew.customSqlSegment}
+    </select>
+
+</mapper>

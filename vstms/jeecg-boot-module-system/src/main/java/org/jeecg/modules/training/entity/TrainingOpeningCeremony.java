@@ -33,6 +33,7 @@ public class TrainingOpeningCeremony extends JeecgEntity {
 	/**培训班编号*/
 	@Excel(name = "培训班编号", width = 15)
     @ApiModelProperty(value = "培训班编号")
+	@Dict(dicCode = "no", dictTable = "training_class", dicText = "name")
 	private java.lang.String classNo;
 	/**举行日期*/
 	@Excel(name = "举行日期", width = 15, format = "yyyy-MM-dd")

@@ -1,17 +1,29 @@
 package org.jeecg.modules.training.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.training.entity.TrainingClassStudent;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.jeecg.modules.training.vo.TrainingClassStudentVO;
 
 /**
  * @Description: 培训班学生关系
  * @Author: jeecg-boot
- * @Date:   2022-05-23
+ * @Date: 2022-05-23
  * @Version: V1.0
  */
 public interface TrainingClassStudentMapper extends BaseMapper<TrainingClassStudent> {
+
+    /**
+     * 分页查询
+     *
+     * @param page         分页参数
+     * @param queryWrapper 查询构造器
+     * @return 分页结果
+     */
+    IPage<TrainingClassStudentVO> selectPage(Page<TrainingClassStudentVO> page, @Param(Constants.WRAPPER) QueryWrapper<TrainingClassStudentVO> queryWrapper);
 
 }

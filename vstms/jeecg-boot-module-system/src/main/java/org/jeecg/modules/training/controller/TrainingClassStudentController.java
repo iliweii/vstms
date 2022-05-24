@@ -19,6 +19,7 @@ import org.jeecg.modules.training.entity.TrainingClassStudent;
 import org.jeecg.modules.training.entity.TrainingClassTeacher;
 import org.jeecg.modules.training.service.ITrainingClassStudentService;
 import org.jeecg.modules.training.service.ITrainingClassTeacherService;
+import org.jeecg.modules.training.vo.TrainingClassStudentVO;
 import org.jeecg.modules.training.vo.TrainingLinkModel;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,13 +59,13 @@ public class TrainingClassStudentController extends JeecgController<TrainingClas
     @AutoLog(value = "培训班学生关系-分页列表查询")
     @ApiOperation(value = "培训班学生关系-分页列表查询", notes = "培训班学生关系-分页列表查询")
     @GetMapping(value = "/list")
-    public Result<?> queryPageList(TrainingClassStudent trainingClassStudent,
+    public Result<?> queryPageList(TrainingClassStudentVO trainingClassStudent,
                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                    HttpServletRequest req) {
-        QueryWrapper<TrainingClassStudent> queryWrapper = QueryGenerator.initQueryWrapper(trainingClassStudent, req.getParameterMap());
-        Page<TrainingClassStudent> page = new Page<TrainingClassStudent>(pageNo, pageSize);
-        IPage<TrainingClassStudent> pageList = trainingClassStudentService.page(page, queryWrapper);
+        QueryWrapper<TrainingClassStudentVO> queryWrapper = QueryGenerator.initQueryWrapper(trainingClassStudent, req.getParameterMap());
+        Page<TrainingClassStudentVO> page = new Page<TrainingClassStudentVO>(pageNo, pageSize);
+        IPage<TrainingClassStudentVO> pageList = trainingClassStudentService.page(page, queryWrapper);
         return Result.OK(pageList);
     }
 

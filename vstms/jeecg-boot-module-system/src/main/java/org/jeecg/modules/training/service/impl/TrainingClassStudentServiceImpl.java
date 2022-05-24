@@ -1,11 +1,15 @@
 package org.jeecg.modules.training.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.modules.training.entity.TrainingClassStudent;
 import org.jeecg.modules.training.mapper.TrainingClassStudentMapper;
 import org.jeecg.modules.training.service.ITrainingClassStudentService;
+import org.jeecg.modules.training.vo.TrainingClassStudentVO;
 import org.jeecg.modules.training.vo.TrainingLinkModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class TrainingClassStudentServiceImpl extends ServiceImpl<TrainingClassStudentMapper, TrainingClassStudent> implements ITrainingClassStudentService {
+
+    @Override
+    public IPage<TrainingClassStudentVO> page(Page<TrainingClassStudentVO> page, QueryWrapper<TrainingClassStudentVO> queryWrapper) {
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
 
     @Override
     public void edit(TrainingLinkModel trainingLinkModel) {

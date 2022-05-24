@@ -72,7 +72,7 @@
             <a-card-meta :title="item.username_dictText">
               <template slot="description">
                 <span>当前：{{ item.status_dictText }}</span>
-                <p v-if="item.status == '1'">报到日期：{{ item.admissionDate }}</p>
+                <p v-if="item.status == '1'" :title="`报到日期：${item.admissionDate}`">{{ item.admissionDate }}</p>
                 <a-button
                   :type="item.status == '1' ? 'link' : 'primary'"
                   size="small"

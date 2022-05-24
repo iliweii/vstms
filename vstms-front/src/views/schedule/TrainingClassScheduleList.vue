@@ -72,7 +72,7 @@
         >
           <template slot="cell" slot-scope="text, record">
             <div @click="handleEdit(getCourseInfo(text, record.id))" class="j-cell" title="点击编辑">
-              <span v-if="getCourseInfo(text, record.id)"
+              <span v-if="getCourseInfo(text, record.id).id"
                 >{{ getCourseInfo(text, record.id).courseName }} /
                 {{ getCourseInfo(text, record.id).teacher_dictText }}</span
               >
@@ -182,10 +182,6 @@ export default {
       ],
       url: {
         list: '/training/trainingClassSchedule/list',
-        delete: '/training/trainingClassSchedule/delete',
-        deleteBatch: '/training/trainingClassSchedule/deleteBatch',
-        exportXlsUrl: 'training/trainingClassSchedule/exportXls',
-        importExcelUrl: 'training/trainingClassSchedule/importExcel',
       },
     }
   },
@@ -216,7 +212,7 @@ export default {
       if (a.length > 0) {
         return a[0]
       } else {
-        return null
+        return { day, several, classNo: this.queryParam.classNo }
       }
     },
   },
@@ -227,6 +223,7 @@ export default {
 
 .j-cell {
   width: 100%;
+  min-height: 16px;
 }
 
 .j-cell:hover {

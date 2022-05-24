@@ -27,14 +27,13 @@
           <a-input placeholder="请输入课程名称" v-model="model.courseName" :disabled="disableSubmit" />
         </a-form-model-item>
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="teacher" label="教师">
-          <a-input placeholder="请输入教师" v-model="model.teacher" :disabled="disableSubmit" />
-          <!-- <j-search-select-tag
-            v-model="model.several"
-            :triggerChange="true"
-            placeholder="请选择节次"
-            dict="class_schedule_several"
-            :disabled="false"
-          /> -->
+          <j-search-select-tag
+            style="width: 100%"
+            v-model="model.teacher"
+            placeholder="请选择教师"
+            :dictOptions="teacherDictOptions"
+            :disabled="disableSubmit"
+          />
         </a-form-model-item>
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="remark" label="备注">
           <a-textarea
@@ -55,7 +54,7 @@
 </template>
 
 <script>
-import { httpAction } from '@/api/manage'
+import { getAction, httpAction } from '@/api/manage'
 import moment from 'moment'
 
 export default {
@@ -64,6 +63,8 @@ export default {
     return {
       title: '操作',
       visible: false,
+      // 数据
+      teacherDictOptions: [], // 教师下拉框list
       model: {},
       labelCol: {
         xs: { span: 24 },
@@ -80,10 +81,13 @@ export default {
       url: {
         add: '/training/trainingClassSchedule/add',
         edit: '/training/trainingClassSchedule/edit',
+        teacherList: '/training/trainingClassStudent/userList', // 教师列表
       },
     }
   },
-  created() {},
+  created() {
+    this.getTeacherList()
+  },
   methods: {
     add() {
       //初始化默认值
@@ -133,6 +137,22 @@ export default {
     },
     handleCancel() {
       this.close()
+    },
+    /**
+     * 异步获取教师list，并赋值到下拉选择列表teacherDictOptions中
+     */
+    async getTeacherList() {
+      const { result } = await getAction(this.url.teacherList, {
+        size: '-1',
+        type: 'teacher',
+        classNo: this.model.classNo,
+      })
+      this.teacherDictOptions = result.records.map((e) => {
+        return {
+          text: e.realname,
+          value: e.username,
+        }
+      })
     },
   },
 }

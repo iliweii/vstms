@@ -74,7 +74,7 @@
               style="width: 100%"
               :returnUrl="false"
               v-decorator="['file', validatorRules.file]"
-              fileType="file"
+              :fileType="fileType"
               :params="{ biz: 'temp' }"
               @change="fileChange"
             ></j-upload>
@@ -165,6 +165,11 @@ export default {
       type: Array,
       required: false,
       default: () => [],
+    },
+    fileType: {
+      type: String,
+      default: 'file',
+      required: false,
     },
     businessType: String,
     objectId: String,

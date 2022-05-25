@@ -39,7 +39,7 @@
 <script>
 
 export default {
-  name: 'PreparatoryMeetingAttach',
+  name: 'SymposiumAttach',
   props: {
     formData: {
       type: Object,

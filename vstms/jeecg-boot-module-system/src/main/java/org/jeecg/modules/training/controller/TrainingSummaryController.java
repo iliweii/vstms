@@ -74,12 +74,13 @@ public class TrainingSummaryController extends JeecgController<TrainingSummary, 
     @PostMapping(value = "/add")
     public Result<?> add(@RequestBody TrainingSummary trainingSummary) {
         // 编号逻辑，总结类型包括：
-        // 学员感言      [username+classNo+'testimonials']
-        // 学员培训总结   [username+classNo+'student']
-        // 教师自评报告   [username+classNo+'teacher']
+        // 学员感言      [classNo+'testimonials'+username]
+        // 学员培训总结   [classNo+'student'+username]
+        // 教师自评报告   [classNo+'teacher'+username]
         // 培训典型案例   [classNo+'typicalCase']
         // 督导总结      [classNo+'supervision']
         // 培训班总结     [classNo]
+        trainingSummary.setDelFlag("0");
         trainingSummaryService.save(trainingSummary);
         return Result.OK("添加成功！", trainingSummary);
     }

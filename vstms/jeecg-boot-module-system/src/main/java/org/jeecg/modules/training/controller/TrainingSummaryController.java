@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
@@ -56,6 +57,9 @@ public class TrainingSummaryController extends JeecgController<TrainingSummary, 
         // flag 特殊标识 代表只能查询自己的日志
         if ("1".equals(flag)) {
             trainingSummary.setCreateBy(loginUser.getUsername());
+        }
+        if (StringUtils.isNotEmpty(trainingSummary.getNo())) {
+            trainingSummary.setNo("," + trainingSummary.getNo() + ",");
         }
         QueryWrapper<TrainingSummary> queryWrapper = QueryGenerator.initQueryWrapper(trainingSummary, req.getParameterMap());
         Page<TrainingSummary> page = new Page<TrainingSummary>(pageNo, pageSize);

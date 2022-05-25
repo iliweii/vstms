@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :title="title" :width="800" placement="right" :closable="false" @close="close" :visible="visible">
+  <a-drawer :title="title" width="60%" placement="right" :closable="false" @close="close" :visible="visible">
     <a-spin :spinning="confirmLoading">
       <a-form-model ref="form" :model="model" :rules="validatorRules">
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="type" label="日志类型">
@@ -9,9 +9,9 @@
             placeholder="请选择日志类型"
             dict="training_log_type"
           />
-          <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="content" label="日志内容" required>
-            <j-editor v-model="model.content" autoSize :style="{ height: '500px' }" :disabled="disableSubmit" />
-          </a-form-model-item>
+        </a-form-model-item>
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="content" label="日志内容" required>
+          <j-editor v-model="model.content" autoSize :style="{ height: '500px' }" :disabled="disableSubmit" />
         </a-form-model-item>
       </a-form-model>
     </a-spin>

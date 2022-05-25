@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       description: '培训日志管理页面',
-      title: '培训日志',
+      title: '培训日志台账',
       // 表头
       columns: [
         {

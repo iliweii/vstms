@@ -92,6 +92,15 @@
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel()" :width="1200">
       <img alt="图片预览" style="width: 100%" :src="previewImage" />
     </a-modal>
+
+    <!-- 视频预览模态框部分 -->
+    <a-modal :visible="previewVideoVisible" :footer="null" @cancel="handleCancel()" :width="1200">
+      <video width="100%" controls>
+        <source :src="previewVideo" type="video/mp4" />
+        <source :src="previewVideo" type="video/ogg" />
+        <source :src="previewVideo" type="video/webm" />
+      </video>
+    </a-modal>
   </span>
 </template>
 
@@ -182,6 +191,9 @@ export default {
       // 图片预览
       previewImage: '',
       previewVisible: false,
+      // 视频预览
+      previewVideo: '',
+      previewVideoVisible: false,
       form: this.$form.createForm(this),
       // 文件id列表数组，仅用于外部组件取值，在保存的时候一起提交数据到相应接口
       // 接口调用修改文件方法，实现文件与业务主键的绑定
@@ -321,6 +333,7 @@ export default {
     handleCancel() {
       this.close()
       this.previewVisible = false
+      this.previewVideoVisible = false
     },
     // 文件预览（图片、PDF）
     handleWatch: function (record) {
@@ -331,6 +344,8 @@ export default {
         this.handlePreview(filePath)
       } else if (ext === 'pdf') {
         window.open(window._CONFIG['previewFileUrl'] + filePath)
+      } else if (this.isAssetTypeAVideo(ext)) {
+        this.handlePreviewVideo(filePath)
       } else {
         this.handleDownload(record)
       }
@@ -339,6 +354,11 @@ export default {
     handlePreview(filePath) {
       this.previewImage = filePath
       this.previewVisible = true
+    },
+    // 视频的预览
+    handlePreviewVideo(filePath) {
+      this.previewVideo = filePath
+      this.previewVideoVisible = true
     },
     // 文件下载
     handleDownload: function (record) {
@@ -398,11 +418,15 @@ export default {
     previewable(name) {
       let index = name.lastIndexOf('.')
       let ext = name.substr(index + 1).toLowerCase()
-      return this.isAssetTypeAnImage(ext) || ext === 'pdf'
+      return this.isAssetTypeAnImage(ext) || this.isAssetTypeAVideo(ext) || ext === 'pdf'
     },
     // 判断后缀是否为图片
     isAssetTypeAnImage(ext) {
       return ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'psd', 'svg', 'tiff'].indexOf(ext.toLowerCase()) !== -1
+    },
+    // 判断后缀是否为视频
+    isAssetTypeAVideo(ext) {
+      return ['mp4', 'avi', 'rmvb', 'wmv', 'mkv', 'flv', 'mov', '3gp', 'mpg', 'mpeg'].indexOf(ext.toLowerCase()) !== -1
     },
   },
 }

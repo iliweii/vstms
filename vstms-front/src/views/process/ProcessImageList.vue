@@ -38,14 +38,14 @@
           :disabled="false"
           businessType="training_process_image"
           :objectId="queryParam.classNo"
-          text="上传培训图片"
+          text="上传培训过程图片"
           fileType="image"
           :labelColumn="{ span: 0 }"
           :wrapperColumn="{ span: 24 }"
         />
         <!-- 操作区域 -->
         <div class="table-operator" v-if="upload.dataSource">
-          <a-button @click="() => this.$refs.jFileUpload.open()" type="primary">上传培训图片</a-button>
+          <a-button @click="() => this.$refs.jFileUpload.open()" type="primary">上传培训过程图片</a-button>
 
           <a-button-group :style="{ marginLeft: '50px' }">
             <a-button @click="handlePre" :disabled="upload.ipagination.current == 1">
@@ -63,7 +63,7 @@
           </a-button-group>
         </div>
         <!-- 图片展览区 -->
-        <a-card title="培训图片" v-if="upload.dataSource">
+        <a-card title="培训过程图片" v-if="upload.dataSource">
           <a-card-grid style="width: 25%; text-align: center" v-for="img in upload.dataSource" :key="img.id">
             <img :src="getFilePath(img.filePath)" :alt="img.fileAlias" :style="{ width: '100%' }" />
             <span class="ant-form-extra" :style="{ fontSize: '12px' }"> {{ img.fileAlias }} </span>
@@ -86,7 +86,7 @@ export default {
   },
   data() {
     return {
-      title: '培训图片',
+      title: '培训过程图片',
       queryParam: {},
 
       upload: {},

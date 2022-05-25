@@ -34,10 +34,10 @@
         <j-file-upload
           ref="jFileUpload"
           :disabled="false"
-          businessType="study_material"
+          businessType="training_works"
           :objectId="queryParam.classNo"
-          dict="file_study_material"
-          text="上传学习资料"
+          dict="file_training_works"
+          text="上传培训作品"
           :labelColumn="{ span: 0 }"
           :wrapperColumn="{ span: 24 }"
         />
@@ -52,7 +52,7 @@
 import PageLayout from '@/components/page/PageLayout'
 
 export default {
-  name: 'StudyMaterial',
+  name: 'TrainingWorks',
   components: {
     PageLayout,
   },

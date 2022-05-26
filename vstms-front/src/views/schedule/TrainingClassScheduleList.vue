@@ -22,10 +22,16 @@
               <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
                 <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
                 <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-                <a @click="handleToggleSearch" style="margin-left: 8px">
-                  {{ toggleSearchStatus ? '收起' : '展开' }}
-                  <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
-                </a>
+
+                <!-- 打印按钮 -->
+                <a-button
+                  type="primary"
+                  v-if="queryParam.classNo"
+                  v-print="'#Schedule'"
+                  icon="printer"
+                  style="margin-left: 8px"
+                  >打印</a-button
+                >
               </span>
             </a-col>
 
@@ -57,7 +63,7 @@
       </div>
 
       <!-- table区域-begin -->
-      <div v-if="queryParam.classNo">
+      <div v-if="queryParam.classNo" id="Schedule">
         <a-table
           ref="table"
           size="middle"
@@ -65,7 +71,7 @@
           rowKey="id"
           :columns="columns"
           :dataSource="simulation"
-          :pagination="ipagination"
+          :pagination="false"
           :loading="loading"
           class="j-table-force-nowrap"
           @change="handleTableChange"

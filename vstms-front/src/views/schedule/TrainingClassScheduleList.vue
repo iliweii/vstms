@@ -185,6 +185,19 @@ export default {
       url: {
         list: '/training/trainingClassSchedule/list',
       },
+
+      /* 分页参数 */
+      ipagination: {
+        current: 1,
+        pageSize: -1,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + '-' + range[1] + ' 共' + total + '条'
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+      },
     }
   },
   computed: {

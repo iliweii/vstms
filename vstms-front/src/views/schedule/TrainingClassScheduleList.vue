@@ -91,9 +91,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import '@/assets/less/TableExpand.less'
 import PageLayout from '@/components/page/PageLayout'
 import TrainingClassScheduleModal from './modules/TrainingClassScheduleModal'
+import { getAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 export default {
@@ -191,6 +193,7 @@ export default {
     },
   },
   created() {
+    this.init()
     this.simulation = this.simulation.map((item, index) => {
       item.id = index + 1
       item.Mon = 'Mon'
@@ -202,8 +205,45 @@ export default {
       item.Sun = 'Sun'
       return item
     })
+    this.loadData(1)
   },
   methods: {
+    /**
+     * 界面初始化时调用
+     */
+    init() {
+      // 将用户习惯的查询取出
+      Object.assign(this.queryParam, Vue.ls.get('USER_QUERY_CLASS_NO'))
+    },
+    /**
+     * 加载数据
+     * @param arg 参数
+     */
+    loadData(arg) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams() //查询条件
+      // 将查询条件存储到本地
+      if (params.classNo) Vue.ls.set('USER_QUERY_CLASS_NO', { classNo: params.classNo })
+      this.loading = true
+      getAction(this.url.list, params)
+        .then((res) => {
+          if (res.success) {
+            this.dataSource = res.result.records || res.result
+            if (res.result.total) {
+              this.ipagination.total = res.result.total
+            } else {
+              this.ipagination.total = 0
+            }
+          } else {
+            this.$message.warning(res.message)
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     /**
      * 获取课程信息
      */

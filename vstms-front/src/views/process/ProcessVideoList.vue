@@ -14,6 +14,7 @@
                   placeholder="请选择培训班"
                   dict="training_class,name,no"
                   :disabled="false"
+                  @change="classNoChange"
                 />
               </a-form-item>
             </a-col>
@@ -37,6 +38,7 @@
           businessType="training_precess_video"
           :objectId="queryParam.classNo"
           text="上传培训过程视频"
+          :key="uploadKey"
           :labelColumn="{ span: 0 }"
           :wrapperColumn="{ span: 24 }"
         />
@@ -48,7 +50,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import PageLayout from '@/components/page/PageLayout'
+import { getAction } from '@/api/manage'
 
 export default {
   name: 'ProcessVideoList',
@@ -58,8 +62,29 @@ export default {
   data() {
     return {
       title: '培训过程视频',
+      uploadKey: String(new Date()),
       queryParam: {},
     }
+  },
+  created() {
+    this.init()
+  },
+  methods: {
+    /**
+     * 界面初始化时调用
+     */
+    init() {
+      // 将用户习惯的查询取出
+      Object.assign(this.queryParam, Vue.ls.get('USER_QUERY_CLASS_NO'))
+    },
+    /**
+     * 培训班变更时调用
+     */
+    classNoChange() {
+      this.uploadKey = String(new Date())
+      // 将用户习惯的查询取出
+      if (this.queryParam.classNo) Vue.ls.set('USER_QUERY_CLASS_NO', { classNo: this.queryParam.classNo })
+    },
   },
 }
 </script>

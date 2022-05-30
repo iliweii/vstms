@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.graduation.mapper.GraduationSelectClassMapper">
+
+    <select id="selectPage" resultType="org.jeecg.modules.graduation.entity.GraduationSelectClass">
+        SELECT *
+        FROM (
+                 SELECT IFNULL(sc.id, clz.id)  id,
+                        clz.no                 class_no,
+                        IFNULL(sc.status, '0') status,
+                        clz.create_by,
+                        clz.create_time,
+                        sc.update_by,
+                        sc.update_time
+                 FROM `training_class` clz
+                          LEFT JOIN graduation_select_class sc ON sc.class_no = clz.no
+             ) t ${ew.customSqlSegment}
+    </select>
+
+</mapper>

@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class TrainingLinkModel {
 
-    @ApiModelProperty(value = "位置ID数组")
+    @ApiModelProperty(value = "用户名数组")
     private List<String> usernameList;
 
     @ApiModelProperty(value = "培训班编码")

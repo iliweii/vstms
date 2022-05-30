@@ -206,7 +206,7 @@ public class TrainingAttendanceServiceImpl extends ServiceImpl<TrainingAttendanc
 
             ErrorMsgUtil.checkError(stringBuffer, detailImport.getClassNo(), "培训班编号不能为空；");
             ErrorMsgUtil.checkError(stringBuffer, detailImport.getUsername(), "学员姓名不能为空；");
-            ErrorMsgUtil.checkError(stringBuffer, detailImport.getAtdDate(), "学员姓名不能为空；");
+            ErrorMsgUtil.checkError(stringBuffer, detailImport.getAtdDate(), "考勤日期不能为空；");
             ErrorMsgUtil.checkError(stringBuffer, this.sysUserService.getUserByName(detailImport.getUsername()), "未找到学员" + detailImport.getUsername() + "；");
             ErrorMsgUtil.checkError(stringBuffer, detailImport.getAtdStatus(), "考勤状态不能为空；");
             if (!Arrays.asList(new String[]{"0", "1", "2", "3"}).contains(detailImport.getAtdStatus())) {

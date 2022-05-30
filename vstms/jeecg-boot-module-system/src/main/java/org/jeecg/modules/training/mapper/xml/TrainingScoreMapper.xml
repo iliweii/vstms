@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.training.mapper.TrainingScoreMapper">
+
+    <select id="selectCoursePage" resultType="org.jeecg.modules.training.vo.TrainingCourseScoreVO">
+        SELECT *
+        FROM (
+                 SELECT t.*, IF(s.count IS NULL, 0, 1) `status`
+                 FROM (
+                          SELECT cs.class_no, cs.course_name, GROUP_CONCAT(cs.teacher) teacher
+                          FROM (SELECT DISTINCT s.class_no, s.course_name, s.teacher FROM training_class_schedule s) cs
+                          GROUP BY cs.class_no, cs.course_name
+                      ) t
+                          LEFT JOIN (SELECT class_no, course_name, COUNT(id) count
+                                     FROM training_score
+                                     GROUP BY class_no, course_name) s ON s.class_no = t.class_no
+                     AND s.course_name = t.course_name
+             ) t ${ew.customSqlSegment}
+    </select>
+
+    <select id="getCourseScore" resultType="org.jeecg.modules.training.excel.CourseScoreExport">
+        SELECT IF(NULL, s.id, cs.id) id, cs.class_no, #{courseName} course_name, cs.username, s.score
+        FROM training_class_student cs
+                 LEFT JOIN training_score s ON s.class_no = cs.class_no AND course_name = #{courseName}
+        WHERE cs.class_no = #{classNo}
+          AND cs.`status` = '1'
+    </select>
+
+</mapper>

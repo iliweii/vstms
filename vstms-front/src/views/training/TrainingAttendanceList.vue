@@ -1,158 +1,163 @@
 <template>
-  <a-card :bordered="false">
-    <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="24">
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="培训班">
-              <j-search-select-tag
-                v-model="queryParam.classNo"
-                :triggerChange="true"
-                placeholder="请选择培训班"
-                dict="training_class,name,no"
-                :disabled="false"
-                @change="loadData()"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="考勤日期">
-              <j-date
-                placeholder="请选择考勤日期"
-                style="width: 100%"
-                v-model="queryParam.atdDate"
-                :showTime="true"
-                dateFormat="YYYY-MM-DD"
-                @change="loadData()"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="考勤状态">
-              <j-search-select-tag
-                v-model="queryParam.atdStatus"
-                :triggerChange="true"
-                placeholder="请选择考勤状态"
-                dict="training_attendance_status"
-                :disabled="false"
-                @change="loadData()"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
-              </a>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
-
-    <!-- 操作按钮区域 -->
-    <div class="table-operator" v-if="queryParam.classNo">
-      <!-- <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button> -->
-      <!-- <a-button type="primary" icon="download" @click="handleExportXls('考勤管理')">导出</a-button> -->
-      <a-upload
-        name="file"
-        :showUploadList="false"
-        :multiple="false"
-        :headers="tokenHeader"
-        :action="importExcelUrl"
-        @change="handleImportExcel"
-      >
-        <a-button type="primary" icon="import">导入</a-button>
-      </a-upload>
-      <a-button type="primary" icon="download" @click="handleExportTemp('考勤表')">导出考勤表模板</a-button>
-      <a-button type="primary" icon="download" @click="handleExportError('考勤表导入错误信息')">导出错误信息</a-button>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel"><a-icon type="delete" />删除</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
-      </a-dropdown>
-
-      <a-alert
-        v-if="!uploadStatus"
-        :description="
-          queryParam.atdDate
-            ? `${queryParam.atdDate}日考勤表未上传`
-            : '今日还未上传本培训班的考勤表，请及时下载考勤模板，填写考勤情况，并上传考勤表。'
-        "
-        type="error"
-        closable
-      />
-      <a-alert
-        v-else
-        :message="`${
-          queryParam.atdDate ? queryParam.atdDate + '日' : '今日'
-        }考勤已上传，本培训班共 ${totalNum}人，出勤 ${attendanceNum}人，出勤率 ${(
-          (attendanceNum / totalNum) *
-          100
-        ).toFixed(0)}%。`"
-        type="success"
-        show-icon
-      />
-    </div>
-
-    <!-- table区域-begin -->
-    <div v-if="queryParam.classNo">
-      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
-        <a style="font-weight: 600">{{ selectedRowKeys.length }}</a
-        >项
-        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+  <page-layout :title="title">
+    <a-card :bordered="false">
+      <!-- 查询区域 -->
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline" @keyup.enter.native="searchQuery">
+          <a-row :gutter="24">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="培训班">
+                <j-search-select-tag
+                  v-model="queryParam.classNo"
+                  :triggerChange="true"
+                  placeholder="请选择培训班"
+                  dict="training_class,name,no"
+                  :disabled="false"
+                  @change="loadData()"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="考勤日期">
+                <j-date
+                  placeholder="请选择考勤日期"
+                  style="width: 100%"
+                  v-model="queryParam.atdDate"
+                  :showTime="true"
+                  dateFormat="YYYY-MM-DD"
+                  @change="loadData()"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="考勤状态">
+                <j-search-select-tag
+                  v-model="queryParam.atdStatus"
+                  :triggerChange="true"
+                  placeholder="请选择考勤状态"
+                  dict="training_attendance_status"
+                  :disabled="false"
+                  @change="loadData()"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
+                <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                <a @click="handleToggleSearch" style="margin-left: 8px">
+                  {{ toggleSearchStatus ? '收起' : '展开' }}
+                  <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
       </div>
 
-      <a-table
-        ref="table"
-        size="middle"
-        bordered
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        class="j-table-force-nowrap"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        @change="handleTableChange"
-      >
-        <span slot="atdStatus" slot-scope="text, record">
-          <a-tag :color="['green', 'pink', 'red', 'orange'][record.atdStatus]"> {{ text }} </a-tag>
-        </span>
-        <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+      <!-- 操作按钮区域 -->
+      <div class="table-operator" v-if="queryParam.classNo">
+        <!-- <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button> -->
+        <!-- <a-button type="primary" icon="download" @click="handleExportXls('考勤管理')">导出</a-button> -->
+        <a-upload
+          name="file"
+          :showUploadList="false"
+          :multiple="false"
+          :headers="tokenHeader"
+          :action="importExcelUrl"
+          @change="handleImportExcel"
+        >
+          <a-button type="primary" icon="import">导入</a-button>
+        </a-upload>
+        <a-button type="primary" icon="download" @click="handleExportTemp('考勤表')">导出考勤表模板</a-button>
+        <a-button type="primary" icon="download" @click="handleExportError('考勤表导入错误信息')"
+          >导出错误信息</a-button
+        >
+        <a-dropdown v-if="selectedRowKeys.length > 0">
+          <a-menu slot="overlay">
+            <a-menu-item key="1" @click="batchDel"><a-icon type="delete" />删除</a-menu-item>
+          </a-menu>
+          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
+        </a-dropdown>
 
-          <a-divider type="vertical" />
-          <a-dropdown>
-            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-                  <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-        </span>
-      </a-table>
-    </div>
-    <a-empty v-else description="请先选择一个培训班，再进行操作" />
-    <!-- table区域-end -->
+        <a-alert
+          v-if="!uploadStatus"
+          :description="
+            queryParam.atdDate
+              ? `${queryParam.atdDate}日考勤表未上传`
+              : '今日还未上传本培训班的考勤表，请及时下载考勤模板，填写考勤情况，并上传考勤表。'
+          "
+          type="error"
+          closable
+        />
+        <a-alert
+          v-else
+          :message="`${
+            queryParam.atdDate ? queryParam.atdDate + '日' : '今日'
+          }考勤已上传，本培训班共 ${totalNum}人，出勤 ${attendanceNum}人，出勤率 ${(
+            (attendanceNum / totalNum) *
+            100
+          ).toFixed(0)}%。`"
+          type="success"
+          show-icon
+        />
+      </div>
 
-    <!-- 表单区域 -->
-    <trainingAttendance-modal ref="modalForm" @ok="modalFormOk"></trainingAttendance-modal>
-  </a-card>
+      <!-- table区域-begin -->
+      <div v-if="queryParam.classNo">
+        <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
+          <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
+          <a style="font-weight: 600">{{ selectedRowKeys.length }}</a
+          >项
+          <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+        </div>
+
+        <a-table
+          ref="table"
+          size="middle"
+          bordered
+          rowKey="id"
+          :columns="columns"
+          :dataSource="dataSource"
+          :pagination="ipagination"
+          :loading="loading"
+          class="j-table-force-nowrap"
+          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+          @change="handleTableChange"
+        >
+          <span slot="atdStatus" slot-scope="text, record">
+            <a-tag :color="['green', 'pink', 'red', 'orange'][record.atdStatus]"> {{ text }} </a-tag>
+          </span>
+          <span slot="action" slot-scope="text, record">
+            <a @click="handleEdit(record)">编辑</a>
+
+            <a-divider type="vertical" />
+            <a-dropdown>
+              <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
+              <a-menu slot="overlay">
+                <a-menu-item>
+                  <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                    <a>删除</a>
+                  </a-popconfirm>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </span>
+        </a-table>
+      </div>
+      <a-empty v-else description="请先选择一个培训班，再进行操作" />
+      <!-- table区域-end -->
+
+      <!-- 表单区域 -->
+      <trainingAttendance-modal ref="modalForm" @ok="modalFormOk"></trainingAttendance-modal>
+    </a-card>
+  </page-layout>
 </template>
 
 <script>
 import Vue from 'vue'
 import '@/assets/less/TableExpand.less'
+import PageLayout from '@/components/page/PageLayout'
 import TrainingAttendanceModal from './modules/TrainingAttendanceModal'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { deleteAction, getAction, downFile, getFileAccessHttpUrl } from '@/api/manage'
@@ -161,11 +166,13 @@ export default {
   name: 'TrainingAttendanceList',
   mixins: [JeecgListMixin],
   components: {
+    PageLayout,
     TrainingAttendanceModal,
   },
   data() {
     return {
       description: '考勤管理管理页面',
+      title: '考勤管理',
       uploadStatus: false, // 今日上传状态
       totalNum: 0, // 培训班总人数
       attendanceNum: 0, // 已考勤人数

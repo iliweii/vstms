@@ -13,6 +13,7 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.training.entity.TrainingClassSchedule;
 import org.jeecg.modules.training.service.ITrainingClassScheduleService;
+import org.jeecg.modules.training.service.ITrainingScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,6 +35,8 @@ import java.util.Arrays;
 public class TrainingClassScheduleController extends JeecgController<TrainingClassSchedule, ITrainingClassScheduleService> {
     @Autowired
     private ITrainingClassScheduleService trainingClassScheduleService;
+    @Autowired
+    private ITrainingScoreService trainingScoreService;
 
     /**
      * 分页列表查询
@@ -85,6 +88,19 @@ public class TrainingClassScheduleController extends JeecgController<TrainingCla
     @ApiOperation(value = "课程表-编辑", notes = "课程表-编辑")
     @PutMapping(value = "/edit")
     public Result<?> edit(@RequestBody TrainingClassSchedule trainingClassSchedule) {
+        // 编辑之前 校验是否已录入成绩，若已录入，禁止修改课程表名称
+        TrainingClassSchedule scheduleQuery = this.trainingClassScheduleService.getById(trainingClassSchedule.getId());
+        // 判断课程名称是否变化
+        if (StringUtils.isNotEmpty(trainingClassSchedule.getCourseName())
+                && !StringUtils.equals(trainingClassSchedule.getCourseName(), scheduleQuery.getCourseName())) {
+            // 变化， 校验是否已录入成绩
+            if (this.trainingScoreService.isEnterGrades(scheduleQuery.getClassNo(),
+                    scheduleQuery.getCourseName())) {
+                // 若已录入，禁止修改课程表名称
+                return Result.error("该课程已录入成绩，不可修改课程名称");
+            }
+        }
+
         trainingClassScheduleService.updateById(trainingClassSchedule);
         return Result.OK("编辑成功!", trainingClassSchedule);
     }

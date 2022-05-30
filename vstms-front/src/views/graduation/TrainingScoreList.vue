@@ -1,145 +1,148 @@
 <template>
-  <a-card :bordered="false">
-    <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="24">
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="培训班">
-              <j-search-select-tag
-                v-model="queryParam.classNo"
-                :triggerChange="true"
-                placeholder="请选择培训班"
-                dict="training_class,name,no"
-                :disabled="false"
-                @change="
-                  () => {
-                    loadData()
-                    getCourseList()
-                  }
-                "
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="课程名称">
-              <j-search-select-tag
-                v-model="queryParam.courseName"
-                placeholder="请选择课程名称"
-                :dictOptions="courseDictOptions"
-                :disabled="false"
-                @change="loadData()"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="录入状态">
-              <j-search-select-tag
-                v-model="queryParam.status"
-                :triggerChange="true"
-                placeholder="请选择录入状态"
-                dict="training_course_score_status"
-                :disabled="false"
-                @change="loadData()"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
-              </a>
-            </span>
-          </a-col>
-          <template v-if="toggleSearchStatus"> </template>
-        </a-row>
-      </a-form>
-    </div>
+  <page-layout :title="title">
+    <a-card :bordered="false">
+      <!-- 查询区域 -->
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline" @keyup.enter.native="searchQuery">
+          <a-row :gutter="24">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="培训班">
+                <j-search-select-tag
+                  v-model="queryParam.classNo"
+                  :triggerChange="true"
+                  placeholder="请选择培训班"
+                  dict="training_class,name,no"
+                  :disabled="false"
+                  @change="
+                    () => {
+                      loadData()
+                      getCourseList()
+                    }
+                  "
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="课程名称">
+                <j-search-select-tag
+                  v-model="queryParam.courseName"
+                  placeholder="请选择课程名称"
+                  :dictOptions="courseDictOptions"
+                  :disabled="false"
+                  @change="loadData()"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="录入状态">
+                <j-search-select-tag
+                  v-model="queryParam.status"
+                  :triggerChange="true"
+                  placeholder="请选择录入状态"
+                  dict="training_course_score_status"
+                  :disabled="false"
+                  @change="loadData()"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
+                <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                <a @click="handleToggleSearch" style="margin-left: 8px">
+                  {{ toggleSearchStatus ? '收起' : '展开' }}
+                  <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+            <template v-if="toggleSearchStatus"> </template>
+          </a-row>
+        </a-form>
+      </div>
 
-    <!-- 操作按钮区域 -->
-    <div class="table-operator" v-if="queryParam.classNo">
-      <!-- <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button> -->
-      <!-- <a-button type="primary" icon="download" @click="handleExportXls('成绩管理')">导出</a-button> -->
-      <a-upload
-        name="file"
-        :showUploadList="false"
-        :multiple="false"
-        :headers="tokenHeader"
-        :action="importExcelUrl"
-        @change="handleImportExcel"
-        :disabled="!queryParam.courseName"
-      >
-        <a-button type="primary" icon="import" :disabled="!queryParam.courseName">导入</a-button>
-      </a-upload>
-      <a-button
-        type="primary"
-        icon="download"
-        @click="handleExportTemp(queryParam.courseName + '成绩表')"
-        :disabled="!queryParam.courseName"
-        >导出成绩表模板</a-button
-      >
-      <a-button
-        type="primary"
-        icon="download"
-        @click="handleExportError('成绩表导入错误信息')"
-        :disabled="!queryParam.courseName"
-        >导出错误信息</a-button
-      >
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel"><a-icon type="delete" />删除</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
-      </a-dropdown>
+      <!-- 操作按钮区域 -->
+      <div class="table-operator" v-if="queryParam.classNo">
+        <!-- <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button> -->
+        <!-- <a-button type="primary" icon="download" @click="handleExportXls('成绩管理')">导出</a-button> -->
+        <a-upload
+          name="file"
+          :showUploadList="false"
+          :multiple="false"
+          :headers="tokenHeader"
+          :action="importExcelUrl"
+          @change="handleImportExcel"
+          :disabled="!queryParam.courseName"
+        >
+          <a-button type="primary" icon="import" :disabled="!queryParam.courseName">导入</a-button>
+        </a-upload>
+        <a-button
+          type="primary"
+          icon="download"
+          @click="handleExportTemp(queryParam.courseName + '成绩表')"
+          :disabled="!queryParam.courseName"
+          >导出成绩表模板</a-button
+        >
+        <a-button
+          type="primary"
+          icon="download"
+          @click="handleExportError('成绩表导入错误信息')"
+          :disabled="!queryParam.courseName"
+          >导出错误信息</a-button
+        >
+        <a-dropdown v-if="selectedRowKeys.length > 0">
+          <a-menu slot="overlay">
+            <a-menu-item key="1" @click="batchDel"><a-icon type="delete" />删除</a-menu-item>
+          </a-menu>
+          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
+        </a-dropdown>
 
-      <a-alert message="请选择课程名称后操作" type="info" v-if="!queryParam.courseName" show-icon />
-    </div>
+        <a-alert message="请选择课程名称后操作" type="info" v-if="!queryParam.courseName" show-icon />
+      </div>
 
-    <!-- table区域-begin -->
-    <div v-if="queryParam.classNo">
-      <!-- <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
+      <!-- table区域-begin -->
+      <div v-if="queryParam.classNo">
+        <!-- <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
         <a style="font-weight: 600">{{ selectedRowKeys.length }}</a
         >项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div> -->
 
-      <a-table
-        ref="table"
-        size="middle"
-        bordered
-        :rowKey="(e) => e.classNo + '-' + e.courseName + '-'"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        class="j-table-force-nowrap"
-        @change="handleTableChange"
-      >
-        <span slot="status" slot-scope="text, record">
-          <a-tag :color="record.status == '0' ? 'red' : 'green'"> {{ text }} </a-tag>
-        </span>
-        <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)" :disabled="record.status == '0'">{{
-            record.status == '0' ? '导入后可查看' : '查看'
-          }}</a>
-        </span>
-      </a-table>
-    </div>
-    <a-empty v-else description="请先选择一个培训班，再进行操作" />
-    <!-- table区域-end -->
+        <a-table
+          ref="table"
+          size="middle"
+          bordered
+          :rowKey="(e) => e.classNo + '-' + e.courseName + '-'"
+          :columns="columns"
+          :dataSource="dataSource"
+          :pagination="ipagination"
+          :loading="loading"
+          class="j-table-force-nowrap"
+          @change="handleTableChange"
+        >
+          <span slot="status" slot-scope="text, record">
+            <a-tag :color="record.status == '0' ? 'red' : 'green'"> {{ text }} </a-tag>
+          </span>
+          <span slot="action" slot-scope="text, record">
+            <a @click="handleEdit(record)" :disabled="record.status == '0'">{{
+              record.status == '0' ? '导入后可查看' : '查看'
+            }}</a>
+          </span>
+        </a-table>
+      </div>
+      <a-empty v-else description="请先选择一个培训班，再进行操作" />
+      <!-- table区域-end -->
 
-    <!-- 表单区域 -->
-    <trainingScore-modal ref="modalForm" @ok="modalFormOk"></trainingScore-modal>
-  </a-card>
+      <!-- 表单区域 -->
+      <trainingScore-modal ref="modalForm" @ok="modalFormOk"></trainingScore-modal>
+    </a-card>
+  </page-layout>
 </template>
 
 <script>
 import Vue from 'vue'
 import '@/assets/less/TableExpand.less'
+import PageLayout from '@/components/page/PageLayout'
 import TrainingScoreModal from './modules/TrainingScoreList'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { deleteAction, getAction, downFile, getFileAccessHttpUrl } from '@/api/manage'
@@ -148,11 +151,13 @@ export default {
   name: 'TrainingScoreList',
   mixins: [JeecgListMixin],
   components: {
+    PageLayout,
     TrainingScoreModal,
   },
   data() {
     return {
       description: '成绩管理管理页面',
+      title: '成绩管理',
       isorter: {
         column: 'courseName',
         order: 'asc',

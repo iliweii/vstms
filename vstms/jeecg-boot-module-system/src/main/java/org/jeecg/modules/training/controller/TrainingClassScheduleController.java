@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: 课程表
@@ -62,6 +63,17 @@ public class TrainingClassScheduleController extends JeecgController<TrainingCla
         Page<TrainingClassSchedule> page = new Page<TrainingClassSchedule>(pageNo, pageSize);
         IPage<TrainingClassSchedule> pageList = trainingClassScheduleService.page(page, queryWrapper);
         return Result.OK(pageList);
+    }
+
+    /**
+     * 课程列表
+     */
+    @AutoLog(value = "课程表-课程列表")
+    @ApiOperation(value = "课程表-课程列表", notes = "课程表-课程列表")
+    @GetMapping(value = "/courseList")
+    public Result<?> queryPageList(@RequestParam(name = "classNo", required = true) String classNo) {
+        List<String> courseList = this.trainingClassScheduleService.getCourseList(classNo);
+        return Result.OK(courseList);
     }
 
     /**

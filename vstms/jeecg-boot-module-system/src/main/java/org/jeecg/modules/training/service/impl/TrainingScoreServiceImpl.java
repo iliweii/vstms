@@ -37,10 +37,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 成绩管理
@@ -83,7 +81,8 @@ public class TrainingScoreServiceImpl extends ServiceImpl<TrainingScoreMapper, T
         ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
         mv.addObject(NormalExcelConstants.FILE_NAME, "成绩表"); //此处设置的filename无效 ,前端会重更新设置一下
         mv.addObject(NormalExcelConstants.CLASS, CourseScoreExport.class);
-        mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("成绩表", "成绩表上传模板，用于培训班编号：" + classNo + "，课程名称" + courseName + "的成绩上传。请勿修改除成绩外的其他已有数据", "成绩表"));
+        mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("成绩表", "成绩表上传模板，用于培训班编号：" + classNo + "，课程名称" + courseName + "的成绩上传。" +
+                "请勿修改除成绩外的其他已有数据。其中成绩为数字保留两位小数。", "成绩表"));
         mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
         return mv;
     }

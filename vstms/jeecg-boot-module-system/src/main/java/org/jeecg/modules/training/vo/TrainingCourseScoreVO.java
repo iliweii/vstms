@@ -14,6 +14,7 @@ public class TrainingCourseScoreVO {
     @ApiModelProperty(value = "课程名称")
     private java.lang.String courseName;
     @ApiModelProperty(value = "录入状态 0未录入 1已录入")
+    @Dict(dicCode = "training_course_score_status")
     private java.lang.String status;
     @ApiModelProperty(value = "教师 逗号分割")
     @Dict(dicCode = "username", dictTable = "sys_user", dicText = "realname")

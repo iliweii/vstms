@@ -1,5 +1,6 @@
 package org.jeecg.common.api.vo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -37,13 +38,13 @@ public class Result<T> implements Serializable {
 	 */
 	@ApiModelProperty(value = "返回代码")
 	private Integer code = 0;
-	
+
 	/**
 	 * 返回数据对象 data
 	 */
 	@ApiModelProperty(value = "返回数据对象")
 	private T result;
-	
+
 	/**
 	 * 时间戳
 	 */
@@ -51,9 +52,9 @@ public class Result<T> implements Serializable {
 	private long timestamp = System.currentTimeMillis();
 
 	public Result() {
-		
+
 	}
-	
+
 	public Result<T> success(String message) {
 		this.message = message;
 		this.code = CommonConstant.SC_OK_200;
@@ -125,7 +126,7 @@ public class Result<T> implements Serializable {
 	public static Result<Object> error(String msg) {
 		return error(CommonConstant.SC_INTERNAL_SERVER_ERROR_500, msg);
 	}
-	
+
 	public static Result<Object> error(int code, String msg) {
 		Result<Object> r = new Result<Object>();
 		r.setCode(code);
@@ -149,5 +150,26 @@ public class Result<T> implements Serializable {
 
 	@JsonIgnore
 	private String onlTable;
+
+	public static Result<?> importReturn(int errorLines, int successLines, String errorMessage, String downLoadUrl) {
+		if (errorLines == 0) {
+			return Result.OK("共" + successLines + "行数据全部导入成功！");
+		} else {
+			JSONObject result = new JSONObject(5);
+			int totalCount = successLines + errorLines;
+			result.put("totalCount", totalCount);
+			result.put("errorCount", errorLines);
+			result.put("successCount", successLines);
+			result.put("msg", "总上传行数：" + totalCount + "，已导入行数：" + successLines + "，错误行数：" + errorLines);
+			result.put("downLoadUrl", downLoadUrl);
+			Result res = Result.OK(result);
+			if (errorMessage != null) {
+				res.setMessage("文件导入成功，但有错误. " + errorMessage);
+			} else {
+				res.setMessage("文件导入成功，但有错误.");
+			}
+			return res;
+		}
+	}
 
 }

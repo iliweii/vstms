@@ -35,9 +35,9 @@ public class TrainingAttendance extends JeecgEntity {
 	@Dict(dicCode = "username", dictTable = "sys_user", dicText = "realname")
 	private java.lang.String username;
 	/**考勤日期*/
-	@Excel(name = "考勤日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@Excel(name = "考勤日期", width = 20, format = "yyyy-MM-dd")
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     @ApiModelProperty(value = "考勤日期")
 	private java.util.Date atdDate;
 	/**考勤状态 0出勤 1迟到 2旷课 3请假*/

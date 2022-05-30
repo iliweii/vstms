@@ -2,4 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.training.mapper.TrainingAttendanceMapper">
 
+    <select id="getAttendanceSheet" resultType="org.jeecg.modules.training.excel.AttendanceSheetExport">
+        SELECT IF(NULL, a.id, cs.id) id, cs.class_no, cs.username, IFNULL(a.atd_date, #{date}) atd_date, a.atd_status
+        FROM training_class_student cs
+                 LEFT JOIN training_attendance a
+                           ON a.username = cs.username AND a.class_no = #{classNo} AND a.atd_date = #{date}
+        WHERE cs.class_no = #{classNo}
+          AND cs.`status` = '1'
+    </select>
+
 </mapper>

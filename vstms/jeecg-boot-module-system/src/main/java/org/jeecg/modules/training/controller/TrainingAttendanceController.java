@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -14,10 +17,10 @@ import org.jeecg.modules.training.entity.TrainingAttendance;
 import org.jeecg.modules.training.service.ITrainingAttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 /**
@@ -53,7 +56,11 @@ public class TrainingAttendanceController extends JeecgController<TrainingAttend
         QueryWrapper<TrainingAttendance> queryWrapper = QueryGenerator.initQueryWrapper(trainingAttendance, req.getParameterMap());
         Page<TrainingAttendance> page = new Page<TrainingAttendance>(pageNo, pageSize);
         IPage<TrainingAttendance> pageList = trainingAttendanceService.page(page, queryWrapper);
-        return Result.OK(pageList);
+        Result<IPage<TrainingAttendance>> result = Result.OK(pageList);
+
+        result.setMessage(this.trainingAttendanceService.queryTodayAd(trainingAttendance.getClassNo(), trainingAttendance.getAtdDate()));
+
+        return result;
     }
 
     /**
@@ -146,15 +153,24 @@ public class TrainingAttendanceController extends JeecgController<TrainingAttend
     }
 
     /**
+     * 下载错误信息
+     */
+    @RequestMapping(value = "/errorXls")
+    public ModelAndView errorXls() {
+        return this.trainingAttendanceService.errorXls();
+    }
+
+    /**
      * 通过excel导入数据
      *
-     * @param request
-     * @param response
      * @return
      */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, TrainingAttendance.class);
+    @ApiImplicitParams({@ApiImplicitParam(name = "file", value = "文件流对象", required = true, dataType = "__File")})
+    public Result<?> importExcel(@RequestParam(value = "file") MultipartFile multipartFile) {
+        if (StringUtils.isEmpty(multipartFile.getOriginalFilename()))
+            return Result.error("文件不存在");
+        return this.trainingAttendanceService.importExcel(multipartFile);
     }
 
 }

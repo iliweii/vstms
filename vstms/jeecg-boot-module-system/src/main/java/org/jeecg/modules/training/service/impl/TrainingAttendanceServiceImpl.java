@@ -57,33 +57,43 @@ public class TrainingAttendanceServiceImpl extends ServiceImpl<TrainingAttendanc
     @Override
     public String queryTodayAd(String classNo, Date adDate) {
         // 查询今日考勤表是否上传 以及今日考勤情况
-        int todayAd = 0;
+        int todayTotal = 0, todayAtd = 0;
         if (ObjectUtils.isNotEmpty(adDate)) {
-            todayAd = this.lambdaQuery()
+            todayTotal = this.lambdaQuery()
                     .eq(TrainingAttendance::getClassNo, classNo)
                     .eq(TrainingAttendance::getAtdDate, adDate)
+                    .count();
+            todayAtd = this.lambdaQuery()
+                    .eq(TrainingAttendance::getClassNo, classNo)
+                    .eq(TrainingAttendance::getAtdDate, adDate)
+                    .eq(TrainingAttendance::getAtdStatus, "1")
                     .count();
         } else {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date(System.currentTimeMillis());
             String dateStr = formatter.format(date);
-            todayAd = this.lambdaQuery()
+            todayTotal = this.lambdaQuery()
                     .eq(TrainingAttendance::getClassNo, classNo)
                     .eq(TrainingAttendance::getAtdDate, dateStr)
                     .count();
+            todayAtd = this.lambdaQuery()
+                    .eq(TrainingAttendance::getClassNo, classNo)
+                    .eq(TrainingAttendance::getAtdDate, dateStr)
+                    .eq(TrainingAttendance::getAtdStatus, "0")
+                    .count();
         }
 
-        int total = this.trainingClassStudentService.lambdaQuery()
-                .eq(TrainingClassStudent::getClassNo, classNo)
-                .eq(TrainingClassStudent::getStatus, "1")
-                .count();
+//        int total = this.trainingClassStudentService.lambdaQuery()
+//                .eq(TrainingClassStudent::getClassNo, classNo)
+//                .eq(TrainingClassStudent::getStatus, "1")
+//                .count();
 
-        if (todayAd == 0) {
+        if (todayTotal == 0) {
             // 说明今日考勤表未上传
             return "false";
         } else {
             // 已上传 | 总人数(在读) | 出勤人数
-            return "true|" + total + "|" + todayAd;
+            return "true|" + todayTotal + "|" + todayAtd;
         }
     }
 

@@ -25,15 +25,15 @@
       <!-- 完成按钮 -->
       <div :style="{ marginLeft: '40px' }">
         <a-button @click="() => handleSubmit(object.id)" type="primary" :disabled="disabled" icon="check"
-          >完成调研过程上传</a-button
+          >完成跟踪过程上传</a-button
         >
         <div class="ant-form-extra" :style="{ fontSize: '12px' }">
-          完成后方可执行后续步骤（调研报告），完成后不可撤销
+          完成后方可执行后续步骤（跟踪总结），完成后不可撤销
         </div>
       </div>
     </a-col>
     <!-- 模态框 -->
-    <a-modal v-model="visible" title="新增调研过程" @ok="handleOk" :width="800">
+    <a-modal v-model="visible" title="新增跟踪过程" @ok="handleOk" :width="800">
       <!-- 表单区域 -->
       <a-form :form="form" autocomplete="off" v-if="!disabled">
         <a-row>
@@ -81,7 +81,7 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import pick from 'lodash.pick'
 
 export default {
-  name: 'ResearchProcess',
+  name: 'TrackProcess',
   mixins: [JeecgListMixin],
   components: {},
   props: {
@@ -110,11 +110,11 @@ export default {
       queryParam: { reqId: this.object.id },
       form: this.$form.createForm(this),
       url: {
-        add: '/research/researchProcess/add', // 调研过程新增
-        edit: '/research/researchProcess/edit', // 调研过程编辑
-        list: '/research/researchProcess/list', // 调研过程列表
-        delete: '/research/researchProcess/delete', // 调研过程删除
-        reqEdit: '/research/researchReq/edit', // 需求调研编辑
+        add: '/tracking/trackingProcess/add', // 跟踪过程新增
+        edit: '/tracking/trackingProcess/edit', // 跟踪过程编辑
+        list: '/tracking/trackingProcess/list', // 跟踪过程列表
+        delete: '/tracking/trackingProcess/delete', // 跟踪过程删除
+        reqEdit: '/tracking/trackingProgram/edit', // 训后跟踪编辑
       },
       // 表头
       columns: [
@@ -126,7 +126,7 @@ export default {
           ellipsis: true,
         },
         {
-          title: '调研内容',
+          title: '跟踪内容',
           align: 'left',
           dataIndex: 'remarks',
           width: 600,

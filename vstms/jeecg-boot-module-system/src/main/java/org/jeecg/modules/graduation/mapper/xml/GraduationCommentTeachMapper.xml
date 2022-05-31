@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.graduation.mapper.GraduationCommentTeachMapper">
+
+    <select id="selectPage" resultType="org.jeecg.modules.graduation.entity.GraduationCommentTeach">
+        SELECT *
+        FROM (
+                 SELECT ct.id,
+                        t.class_no,
+                        t.course_name,
+                        t.teacher,
+                        ct.score,
+                        ct.comments,
+                        ct.create_by,
+                        ct.create_time,
+                        ct.update_by,
+                        ct.update_time
+                 FROM (SELECT class_no, course_name, GROUP_CONCAT(teacher) teacher
+                       FROM (SELECT DISTINCT class_no, course_name, teacher FROM training_class_schedule) t
+                       GROUP BY class_no, course_name) t
+                          LEFT JOIN graduation_comment_teach ct
+                                    ON ct.class_no = t.class_no AND ct.course_name = t.course_name
+             ) t ${ew.customSqlSegment}
+    </select>
+
+</mapper>

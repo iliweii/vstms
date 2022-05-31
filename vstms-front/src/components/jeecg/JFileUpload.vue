@@ -23,7 +23,8 @@
             @change="handleTableChange"
           >
             <span slot="action" slot-scope="text, record">
-              <a @click="handleWatch(record)" :disabled="!previewable(record.fileName)">预览</a>
+              <!-- :disabled="!previewable(record.fileName)" -->
+              <a @click="handleWatch(record)">预览</a>
               <a-divider type="vertical" />
               <a @click="handleDownload(record)">下载</a>
               <a-divider type="vertical" v-if="record.createBy == userInfo().username" />
@@ -347,7 +348,7 @@ export default {
       } else if (this.isAssetTypeAVideo(ext)) {
         this.handlePreviewVideo(filePath)
       } else {
-        this.handleDownload(record)
+        window.open('http://fileview.jeecg.com/onlinePreview?url=' + encodeURIComponent(filePath))
       }
     },
     // 图片的预览

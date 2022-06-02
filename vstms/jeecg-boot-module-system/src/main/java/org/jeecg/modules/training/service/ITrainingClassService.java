@@ -30,4 +30,11 @@ public interface ITrainingClassService extends IService<TrainingClass> {
      */
     void add(TrainingClass trainingClass);
 
+    /**
+     * 根据编号获取培训班
+     *
+     * @return
+     */
+    TrainingClass getByNo(String no);
+
 }

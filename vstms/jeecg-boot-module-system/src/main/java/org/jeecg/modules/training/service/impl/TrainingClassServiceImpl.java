@@ -40,4 +40,9 @@ public class TrainingClassServiceImpl extends ServiceImpl<TrainingClassMapper, T
 
         this.save(trainingClass);
     }
+
+    @Override
+    public TrainingClass getByNo(String no) {
+        return this.lambdaQuery().eq(TrainingClass::getNo, no).one();
+    }
 }

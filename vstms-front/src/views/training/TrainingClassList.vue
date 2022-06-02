@@ -181,6 +181,11 @@ export default {
           dataIndex: 'name',
         },
         {
+          title: '职业技能名称',
+          align: 'center',
+          dataIndex: 'skillName',
+        },
+        {
           title: '课时',
           align: 'center',
           dataIndex: 'period',

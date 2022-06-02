@@ -56,6 +56,10 @@ public class TrainingClass extends JeecgEntity {
 	@Excel(name = "参考学生数量", width = 15)
     @ApiModelProperty(value = "参考学生数量")
 	private java.lang.Integer studentNum;
+	/**职业技能名称*/
+	@Excel(name = "职业技能名称", width = 15)
+	@ApiModelProperty(value = "职业技能名称")
+	private java.lang.String skillName;
 	/**状态 0草稿 1录入信息中 2通过 3禁用*/
 	@Excel(name = "状态 0草稿 1录入信息中 2通过 3禁用", width = 15)
     @ApiModelProperty(value = "状态 0草稿 1录入信息中 2通过 3禁用")

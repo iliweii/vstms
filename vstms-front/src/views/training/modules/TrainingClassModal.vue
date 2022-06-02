@@ -39,6 +39,11 @@
               <a-input placeholder="请输入学生数量" suffix="人" v-model="model.studentNum" :disabled="disableSubmit" />
             </a-form-model-item>
           </a-col>
+          <a-col>
+            <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="skillName" label="职业技能名称">
+              <a-input placeholder="请输入职业技能" v-model="model.skillName" :disabled="disableSubmit" />
+            </a-form-model-item>
+          </a-col>
           <a-col :md="24">
             <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="description" label="描述">
               <a-textarea

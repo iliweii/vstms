@@ -156,7 +156,7 @@ export default {
         },
       ],
       url: {
-        list: '/graduation/graduationCommentTeach/list',
+        list: '/graduation/graduationCommentTeach/list?type=student',
         delete: '/graduation/graduationCommentTeach/delete',
         deleteBatch: '/graduation/graduationCommentTeach/deleteBatch',
         exportXlsUrl: 'graduation/graduationCommentTeach/exportXls',

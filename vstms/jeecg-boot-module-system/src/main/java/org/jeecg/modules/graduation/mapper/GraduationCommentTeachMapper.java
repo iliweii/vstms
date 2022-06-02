@@ -25,4 +25,14 @@ public interface GraduationCommentTeachMapper extends BaseMapper<GraduationComme
      */
     IPage<GraduationCommentTeach> selectPage(Page<GraduationCommentTeach> page, @Param(Constants.WRAPPER) QueryWrapper<GraduationCommentTeach> queryWrapper);
 
+    /**
+     * 分页查询某学生的评教列表
+     *
+     * @param page         分页参数
+     * @param queryWrapper 查询构造器
+     * @param student      学生用户名
+     * @return 分页结果
+     */
+    IPage<GraduationCommentTeach> selectCTPage(Page<GraduationCommentTeach> page, @Param(Constants.WRAPPER) QueryWrapper<GraduationCommentTeach> queryWrapper, String student);
+
 }

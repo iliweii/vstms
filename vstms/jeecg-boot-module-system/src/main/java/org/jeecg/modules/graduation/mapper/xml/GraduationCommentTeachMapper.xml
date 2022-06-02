@@ -23,4 +23,25 @@
              ) t ${ew.customSqlSegment}
     </select>
 
+    <select id="selectCTPage" resultType="org.jeecg.modules.graduation.entity.GraduationCommentTeach">
+        SELECT *
+        FROM (
+                 SELECT ct.id,
+                        t.class_no,
+                        t.course_name,
+                        t.teacher,
+                        ct.score,
+                        ct.comments,
+                        ct.create_by,
+                        ct.create_time,
+                        ct.update_by,
+                        ct.update_time
+                 FROM (SELECT class_no, course_name, GROUP_CONCAT(teacher) teacher
+                       FROM (SELECT DISTINCT class_no, course_name, teacher FROM training_class_schedule) t
+                       GROUP BY class_no, course_name) t
+                          LEFT JOIN (SELECT * FROM graduation_comment_teach WHERE create_by = #{student}) ct
+                                    ON ct.class_no = t.class_no AND ct.course_name = t.course_name
+             ) t ${ew.customSqlSegment}
+    </select>
+
 </mapper>

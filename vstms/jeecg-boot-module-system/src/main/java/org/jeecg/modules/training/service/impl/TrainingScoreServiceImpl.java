@@ -157,6 +157,14 @@ public class TrainingScoreServiceImpl extends ServiceImpl<TrainingScoreMapper, T
         }
     }
 
+    @Override
+    public List<TrainingScore> getScoreListByStudent(String classNo, String student) {
+        return this.lambdaQuery()
+                .eq(TrainingScore::getClassNo, classNo)
+                .eq(TrainingScore::getUsername, student)
+                .list();
+    }
+
     /**
      * 对数据进行校验
      *

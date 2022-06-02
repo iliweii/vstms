@@ -10,6 +10,8 @@ import org.jeecg.modules.training.vo.TrainingCourseScoreVO;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 /**
  * @Description: 成绩管理
  * @Author: jeecg-boot
@@ -57,5 +59,14 @@ public interface ITrainingScoreService extends IService<TrainingScore> {
      * @return
      */
     Result<?> importExcel(MultipartFile multipartFile);
+
+    /**
+     * 根据学号获取成绩列表
+     *
+     * @param classNo
+     * @param student
+     * @return
+     */
+    List<TrainingScore> getScoreListByStudent(String classNo, String student);
 
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.graduation.mapper.GraduationCertificateMapper">
+
+    <select id="selectPage" resultType="org.jeecg.modules.graduation.entity.GraduationCertificate">
+        SELECT *
+        FROM (
+                 SELECT r.id,
+                        r.no,
+                        s.class_no,
+                        r.skill_name,
+                        s.username         student,
+                        r.student_id,
+                        r.student_name,
+                        IFNULL(r.`status`, '0')  `status`,
+                        r.create_by,
+                        r.create_time
+                 FROM `training_class_student` s
+                          LEFT JOIN graduation_certificate r ON r.class_no = s.class_no AND r.student = s.username
+             ) t ${ew.customSqlSegment}
+    </select>
+
+</mapper>

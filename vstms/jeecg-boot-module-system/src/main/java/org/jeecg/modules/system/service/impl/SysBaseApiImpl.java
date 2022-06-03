@@ -50,7 +50,7 @@ import java.util.*;
 /**
  * @Description: 底层共通业务API，提供其他独立模块调用
  * @Author: scott
- * @Date:2019-4-20 
+ * @Date:2019-4-20
  * @Version:V1.0
  */
 @Slf4j
@@ -309,8 +309,9 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 				message.getCategory());
 		try {
 			// 同步发送第三方APP消息
-			wechatEnterpriseService.sendMessage(message, true);
-			dingtalkService.sendMessage(message, true);
+			// TODO 禁用第三方消息
+			// wechatEnterpriseService.sendMessage(message, true);
+			// dingtalkService.sendMessage(message, true);
 		} catch (Exception e) {
 			log.error("同步发送第三方APP消息失败！", e);
 		}

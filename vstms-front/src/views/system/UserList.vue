@@ -27,13 +27,13 @@
           <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
               <a-form-item label="真实名字">
-                <a-input placeholder="请输入真实名字" v-model="queryParam.realname"></a-input>
+                <j-input placeholder="请输入真实名字" v-model="queryParam.realname"></j-input>
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="8">
               <a-form-item label="手机号码">
-                <a-input placeholder="请输入手机号码查询" v-model="queryParam.phone"></a-input>
+                <j-input placeholder="请输入手机号码查询" v-model="queryParam.phone"></j-input>
               </a-form-item>
             </a-col>
 
@@ -156,9 +156,9 @@
                 </a-popconfirm>
               </a-menu-item>
 
-              <a-menu-item>
+              <!-- <a-menu-item>
                 <a href="javascript:;" @click="handleAgentSettings(record.username)">代理人</a>
-              </a-menu-item>
+              </a-menu-item> -->
 
             </a-menu>
           </a-dropdown>
@@ -262,16 +262,10 @@
             dataIndex: 'phone'
           },
           {
-            title: '部门',
+            title: '邮箱',
             align: "center",
-            width: 180,
-            dataIndex: 'orgCodeTxt'
-          },
-          {
-            title: '负责部门',
-            align: "center",
-            width: 180,
-            dataIndex: 'departIds_dictText'
+            width: 100,
+            dataIndex: 'email'
           },
           {
             title: '状态',

@@ -1,28 +1,25 @@
 <template>
   <div id="userLayout" :class="['user-layout-wrapper', device]">
     <div class="container">
-      <div class="top">
-        <div class="header">
-          <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">培训管理系统</span>
-          </a>
-        </div>
-        <div class="desc">
-          职业院校培训管理系统
+      <div class="main-out">
+        <img src="@/assets/login1.png" alt="" />
+        <div>
+          <div class="top">
+            <div class="header">
+              <a href="/">
+                <img src="~@/assets/logo.svg" class="logo" alt="logo" />
+                <span class="title">培训管理系统</span>
+              </a>
+            </div>
+            <div class="desc">职业院校培训管理系统</div>
+            <route-view></route-view>
+          </div>
         </div>
       </div>
 
-      <route-view></route-view>
-
       <div class="footer">
-        <!-- <div class="links">
-          <a href="http://doc.jeecg.com" target="_blank">帮助</a>
-          <a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>
-          <a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>
-        </div> -->
         <div class="copyright">
-          Copyright &copy; 2022 <a href="http://jsjxy.sdut.edu.cn" target="_blank">计算机科学与技术学院</a> 李威
+          Copyright &copy; 2022 计算机科学与技术学院 李威
         </div>
       </div>
     </div>
@@ -30,121 +27,139 @@
 </template>
 
 <script>
-  import RouteView from "@/components/layouts/RouteView"
-  import { mixinDevice } from '@/utils/mixin.js'
+import RouteView from '@/components/layouts/RouteView'
+import { mixinDevice } from '@/utils/mixin.js'
 
-  export default {
-    name: "UserLayout",
-    components: { RouteView },
-    mixins: [mixinDevice],
-    data () {
-      return {}
-    },
-    mounted () {
-      document.body.classList.add('userLayout')
-    },
-    beforeDestroy () {
-      document.body.classList.remove('userLayout')
-    },
-  }
+export default {
+  name: 'UserLayout',
+  components: { RouteView },
+  mixins: [mixinDevice],
+  data() {
+    return {}
+  },
+  mounted() {
+    document.body.classList.add('userLayout')
+  },
+  beforeDestroy() {
+    document.body.classList.remove('userLayout')
+  },
+}
 </script>
 
 <style lang="less" scoped>
-  #userLayout.user-layout-wrapper {
-    height: 100%;
+#userLayout.user-layout-wrapper {
+  height: 100%;
 
-    &.mobile {
-      .container {
-        .main {
-          max-width: 368px;
-          width: 98%;
-        }
-      }
-    }
-
+  &.mobile {
     .container {
-      width: 100%;
-      min-height: 100%;
-      background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
-      background-size: 100%;
-      padding: 110px 0 144px;
-      position: relative;
-
-      a {
-        text-decoration: none;
-      }
-
-      .top {
-        text-align: center;
-
-        .header {
-          height: 44px;
-          line-height: 44px;
-
-          .badge {
-            position: absolute;
-            display: inline-block;
-            line-height: 1;
-            vertical-align: middle;
-            margin-left: -12px;
-            margin-top: -10px;
-            opacity: 0.8;
-          }
-
-          .logo {
-            height: 44px;
-            vertical-align: top;
-            margin-right: 16px;
-            border-style: none;
-          }
-
-          .title {
-            font-size: 33px;
-            color: rgba(0, 0, 0, .85);
-            font-family: "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            font-weight: 600;
-            position: relative;
-            top: 2px;
-          }
-        }
-        .desc {
-          font-size: 14px;
-          color: rgba(0, 0, 0, 0.45);
-          margin-top: 12px;
-          margin-bottom: 40px;
-        }
-      }
-
       .main {
-        min-width: 260px;
-        width: 368px;
-        margin: 0 auto;
-      }
-
-      .footer {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-        padding: 0 16px;
-        margin: 48px 0 24px;
-        text-align: center;
-
-        .links {
-          margin-bottom: 8px;
-          font-size: 14px;
-          a {
-            color: rgba(0, 0, 0, 0.45);
-            transition: all 0.3s;
-            &:not(:last-child) {
-              margin-right: 40px;
-            }
-          }
-        }
-        .copyright {
-          color: rgba(0, 0, 0, 0.45);
-          font-size: 14px;
-        }
+        max-width: 368px;
+        width: 98%;
       }
     }
   }
+
+  .container {
+    width: 100%;
+    min-height: 100%;
+    background: #f0f2f5 url(~@/assets/pexels-pixabay-33109.jpg) no-repeat 50%;
+    background-size: 100%;
+    padding: 110px 0 144px;
+    position: relative;
+
+    a {
+      text-decoration: none;
+    }
+
+    .top {
+      text-align: center;
+
+      .header {
+        height: 44px;
+        line-height: 44px;
+
+        .badge {
+          position: absolute;
+          display: inline-block;
+          line-height: 1;
+          vertical-align: middle;
+          margin-left: -12px;
+          margin-top: -10px;
+          opacity: 0.8;
+        }
+
+        .logo {
+          height: 44px;
+          vertical-align: top;
+          margin-right: 16px;
+          border-style: none;
+        }
+
+        .title {
+          font-size: 33px;
+          color: rgba(0, 0, 0, 0.85);
+          font-family: 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+            'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+            'Segoe UI Symbol';
+          font-weight: 600;
+          position: relative;
+          top: 2px;
+        }
+      }
+      .desc {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.45);
+        margin-top: 12px;
+        margin-bottom: 40px;
+      }
+    }
+
+    .main-out {
+      display: flex;
+      justify-content: space-between;
+      width: 70%;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 40px 80px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+      border-radius: 4px;
+
+      img {
+        height: 60vh;
+      }
+    }
+
+    .main {
+      min-width: 260px;
+      width: 368px;
+      margin: 0 auto;
+    }
+
+    .footer {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      padding: 0 16px;
+      margin: 48px 0 24px;
+      text-align: center;
+
+      .links {
+        margin-bottom: 8px;
+        font-size: 14px;
+        a {
+          color: rgba(0, 0, 0, 0.45);
+          transition: all 0.3s;
+          &:not(:last-child) {
+            margin-right: 40px;
+          }
+        }
+      }
+      .copyright {
+        color: rgb(0, 0, 0);
+        font-size: 14px;
+        text-shadow: 0 0 1px rgb(255, 255, 255);
+      }
+    }
+  }
+}
 </style>

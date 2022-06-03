@@ -1029,6 +1029,34 @@ public class SysUserController {
     }
 
     /**
+     * 用户邮箱验证
+     */
+    @PostMapping("/emailVerification")
+    public Result<Map<String, String>> emailVerification(@RequestBody JSONObject jsonObject) {
+        Result<Map<String, String>> result = new Result<Map<String, String>>();
+        String email = jsonObject.getString("email");
+        String smscode = jsonObject.getString("smscode");
+        Object code = redisUtil.get(email);
+        if (!smscode.equals(code)) {
+            result.setMessage("手机验证码错误");
+            result.setSuccess(false);
+            return result;
+        }
+        //设置有效时间
+        redisUtil.set(email, smscode, 600);
+        //新增查询用户名
+        LambdaQueryWrapper<SysUser> query = new LambdaQueryWrapper<>();
+        query.eq(SysUser::getEmail, email);
+        SysUser user = sysUserService.getOne(query);
+        Map<String, String> map = new HashMap<>();
+        map.put("smscode", smscode);
+        map.put("username", user.getUsername());
+        result.setResult(map);
+        result.setSuccess(true);
+        return result;
+    }
+
+    /**
      * 用户更改密码
      */
     @GetMapping("/passwordChange")

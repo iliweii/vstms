@@ -25,9 +25,14 @@ import org.jeecg.modules.system.service.*;
 import org.jeecg.modules.system.util.RandImageUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -57,6 +62,11 @@ public class LoginController {
     private ISysDictService sysDictService;
 	@Resource
 	private BaseCommonService baseCommonService;
+	@Resource
+	private JavaMailSender javaMailSender;
+	@Value("${spring.mail.username}")
+	private String from;
+
 
 	private static final String BASE_CHECK_CODES = "qwertyuiplkjhgfdsazxcvbnmQWERTYUPLKJHGFDSAZXCVBNM1234567890";
 
@@ -86,7 +96,7 @@ public class LoginController {
 			return result;
 		}
 		//update-end-author:taoyan date:20190828 for:校验验证码
-		
+
 		//1. 校验用户是否有效
 		//update-begin-author:wangshuai date:20200601 for: 登录代码验证用户是否注销bug，if条件永远为false
 		LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
@@ -97,7 +107,7 @@ public class LoginController {
 		if(!result.isSuccess()) {
 			return result;
 		}
-		
+
 		//2. 校验用户名或密码是否正确
 		String userpassword = PasswordUtil.encrypt(username, password, sysUser.getSalt());
 		String syspassword = sysUser.getPassword();
@@ -105,7 +115,7 @@ public class LoginController {
 			result.error500("用户名或密码错误");
 			return result;
 		}
-				
+
 		//用户登录信息
 		userInfo(sysUser, result);
 		//update-begin--Author:liusq  Date:20210126  for：登录成功，删除redis中的验证码
@@ -117,7 +127,7 @@ public class LoginController {
         //update-end--Author:wangshuai  Date:20200714  for：登录日志没有记录人员
 		return result;
 	}
-	
+
 	/**
 	 * 退出登录
 	 * @param request
@@ -151,7 +161,7 @@ public class LoginController {
 	    	return Result.error("Token无效!");
 	    }
 	}
-	
+
 	/**
 	 * 获取访问量
 	 * @return
@@ -182,7 +192,7 @@ public class LoginController {
 		result.success("登录成功");
 		return result;
 	}
-	
+
 	/**
 	 * 获取访问量
 	 * @return
@@ -203,8 +213,8 @@ public class LoginController {
 		result.setResult(oConvertUtils.toLowerCasePageList(list));
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * 登陆成功选择用户当前部门
 	 * @param user
@@ -229,7 +239,7 @@ public class LoginController {
 
 	/**
 	 * 短信登录接口
-	 * 
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -278,7 +288,7 @@ public class LoginController {
 					}
 					return result;
 				}
-				
+
 				/**
 				 * smsmode 短信模板方式  0 .登录模板、1.注册模板、2.忘记密码模板
 				 */
@@ -310,11 +320,126 @@ public class LoginController {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * 邮箱登录接口
+	 *
+	 * @param jsonObject
+	 * @return
+	 */
+	@PostMapping(value = "/email")
+	public Result<String> email(@RequestBody JSONObject jsonObject) {
+		Result<String> result = new Result<String>();
+		String email = jsonObject.get("email").toString();
+		//手机号模式 登录模式: "2"  注册模式: "1"
+		String smsmode=jsonObject.get("smsmode").toString();
+		log.info(email);
+		if(oConvertUtils.isEmpty(email)){
+			result.setMessage("邮箱不允许为空！");
+			result.setSuccess(false);
+			return result;
+		}
+		Object object = redisUtil.get(email);
+		if (object != null) {
+			result.setMessage("验证码10分钟内，仍然有效！");
+			result.setSuccess(false);
+			return result;
+		}
+
+		//随机数
+		String captcha = RandomUtil.randomNumbers(6);
+		JSONObject obj = new JSONObject();
+		obj.put("code", captcha);
+		try {
+			boolean b = false;
+			//注册模板
+			if (CommonConstant.SMS_TPL_TYPE_1.equals(smsmode)) {
+				SysUser sysUser = sysUserService.getUserByEmail(email);
+				if(sysUser!=null) {
+					result.error500("邮箱已经注册，请直接登录！");
+					baseCommonService.addLog("邮箱已经注册，请直接登录！", CommonConstant.LOG_TYPE_1, null);
+					return result;
+				}
+				// 发送邮箱验证码
+				// b = DySmsHelper.sendSms(email, obj, DySmsEnum.REGISTER_TEMPLATE_CODE);
+				sendMail(email, "【培训管理系统】用户注册验证码", "您正在使用此邮箱进行职业院校培训管理系统的用户注册，验证码：" +
+						captcha + "，十分钟内有效。");
+				b = true;
+			}else {
+				//登录模式，校验用户有效性
+				SysUser sysUser = sysUserService.getUserByEmail(email);
+				result = sysUserService.checkUserIsEffective(sysUser);
+				if(!result.isSuccess()) {
+					String message = result.getMessage();
+					if("该用户不存在，请注册".equals(message)){
+						result.error500("该用户不存在或未绑定邮箱");
+					}
+					return result;
+				}
+
+				/**
+				 * smsmode 短信模板方式  0 .登录模板、1.注册模板、2.忘记密码模板
+				 */
+				if (CommonConstant.SMS_TPL_TYPE_0.equals(smsmode)) {
+					//登录模板
+					// b = DySmsHelper.sendSms(email, obj, DySmsEnum.LOGIN_TEMPLATE_CODE);
+					sendMail(email, "【培训管理系统】用户登录验证码", "您正在使用此邮箱进行职业院校培训管理系统的用户登录，验证码：" +
+							captcha + "，十分钟内有效。");
+					b = true;
+				} else if(CommonConstant.SMS_TPL_TYPE_2.equals(smsmode)) {
+					//忘记密码模板
+					// b = DySmsHelper.sendSms(email, obj, DySmsEnum.FORGET_PASSWORD_TEMPLATE_CODE);
+					sendMail(email, "【培训管理系统】找回密码验证码", "您正在使用此邮箱在职业院校培训管理系统找回找回密码，验证码：" +
+							captcha + "，十分钟内有效。");
+					b = true;
+				}
+			}
+
+			if (b == false) {
+				result.setMessage("验证码发送失败,请稍后重试");
+				result.setSuccess(false);
+				return result;
+			}
+			//验证码10分钟内有效
+			redisUtil.set(email, captcha, 600);
+			//update-begin--Author:scott  Date:20190812 for：issues#391
+			//result.setResult(captcha);
+			//update-end--Author:scott  Date:20190812 for：issues#391
+			result.setSuccess(true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.error500(" 短信接口未配置，请联系管理员！");
+			return result;
+		}
+		return result;
+	}
+
+	/**
+	 * 发送邮件
+	 *
+	 * @param to
+	 * @param subject
+	 * @param content
+	 */
+	public void sendMail(String to, String subject, String content) {
+		try {
+			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+			MimeMessageHelper mimeMessageHelper=new MimeMessageHelper(mimeMessage);
+			mimeMessageHelper.setFrom(from);
+			mimeMessageHelper.setTo(to);
+			mimeMessageHelper.setSubject(subject);
+			mimeMessageHelper.setText(content,true);
+			javaMailSender.send(mimeMessageHelper.getMimeMessage());
+		} catch (MessagingException e) {
+			log.error("发送邮件失败:" + e.getMessage());
+		}
+	}
+
 
 	/**
 	 * 手机号登录接口
-	 * 
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -323,14 +448,14 @@ public class LoginController {
 	public Result<JSONObject> phoneLogin(@RequestBody JSONObject jsonObject) {
 		Result<JSONObject> result = new Result<JSONObject>();
 		String phone = jsonObject.getString("mobile");
-		
+
 		//校验用户有效性
 		SysUser sysUser = sysUserService.getUserByPhone(phone);
 		result = sysUserService.checkUserIsEffective(sysUser);
 		if(!result.isSuccess()) {
 			return result;
 		}
-		
+
 		String smscode = jsonObject.getString("captcha");
 		Object code = redisUtil.get(phone);
 		if (!smscode.equals(code)) {
@@ -439,7 +564,7 @@ public class LoginController {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * app登录
 	 * @param sysLoginModel
@@ -451,14 +576,14 @@ public class LoginController {
 		Result<JSONObject> result = new Result<JSONObject>();
 		String username = sysLoginModel.getUsername();
 		String password = sysLoginModel.getPassword();
-		
+
 		//1. 校验用户是否有效
 		SysUser sysUser = sysUserService.getUserByName(username);
 		result = sysUserService.checkUserIsEffective(sysUser);
 		if(!result.isSuccess()) {
 			return result;
 		}
-		
+
 		//2. 校验用户名或密码是否正确
 		String userpassword = PasswordUtil.encrypt(username, password, sysUser.getSalt());
 		String syspassword = sysUser.getPassword();
@@ -466,7 +591,7 @@ public class LoginController {
 			result.error500("用户名或密码错误");
 			return result;
 		}
-		
+
 		String orgCode = sysUser.getOrgCode();
 		if(oConvertUtils.isEmpty(orgCode)) {
 			//如果当前用户无选择部门 查看部门关联信息
@@ -482,7 +607,7 @@ public class LoginController {
 		JSONObject obj = new JSONObject();
 		//用户登录信息
 		obj.put("userInfo", sysUser);
-		
+
 		// 生成token
 		String token = JwtUtil.sign(username, syspassword);
 		// 设置超时时间

@@ -157,7 +157,7 @@ export default {
         },
       ],
       url: {
-        list: '/graduation/graduationSuggestions/list',
+        list: '/graduation/graduationSuggestions/list?type=self',
         delete: '/graduation/graduationSuggestions/delete',
         deleteBatch: '/graduation/graduationSuggestions/deleteBatch',
         exportXlsUrl: 'graduation/graduationSuggestions/exportXls',

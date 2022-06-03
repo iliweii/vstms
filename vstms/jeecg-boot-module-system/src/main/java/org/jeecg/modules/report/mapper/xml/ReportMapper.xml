@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.jeecg.modules.research.mapper.ResearchProcessMapper">
+<mapper namespace="org.jeecg.modules.report.mapper.ReportMapper">
+
+    <select id="getAttednance" resultType="java.util.Map">
+        SELECT atd_date, COUNT(id) num
+        FROM training_attendance
+        GROUP BY atd_date
+        ORDER BY atd_date DESC
+        limit 0, 7
+    </select>
+
+    <select id="getStudyMaterial" resultType="java.util.Map">
+        SELECT date_format(create_time, '%Y-%m-%d') date,
+               COUNT(id)                            num
+        FROM upload_file
+        WHERE business_type = 'study_material'
+        GROUP BY date_format(create_time, '%Y-%m-%d')
+        ORDER BY date_format(create_time, '%Y-%m-%d') DESC
+        LIMIT 0, 7
+    </select>
+
+    <select id="getLog" resultType="java.util.Map">
+        SELECT date_format(create_time, '%Y-%m-%d') date,
+               COUNT(id)                            num
+        FROM training_log
+        GROUP BY date_format(create_time, '%Y-%m-%d')
+        ORDER BY date_format(create_time, '%Y-%m-%d') DESC
+        LIMIT 0, 7
+    </select>
 
 </mapper>

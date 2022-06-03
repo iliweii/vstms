@@ -11,8 +11,10 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.DictModel;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.entity.SysUserRole;
+import org.jeecg.modules.system.service.ISysDictService;
 import org.jeecg.modules.system.service.ISysUserRoleService;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.jeecg.modules.training.entity.TrainingClassStudent;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +49,7 @@ public class TrainingClassStudentController extends JeecgController<TrainingClas
     private final ITrainingClassTeacherService trainingClassTeacherService;
     private final ISysUserService sysUserService;
     private final ISysUserRoleService sysUserRoleService;
+    private final ISysDictService sysDictService;
 
     /**
      * 分页列表查询
@@ -166,6 +170,33 @@ public class TrainingClassStudentController extends JeecgController<TrainingClas
     public Result<?> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
         this.trainingClassStudentService.removeByIds(Arrays.asList(ids.split(",")));
         return Result.OK("批量删除成功！");
+    }
+
+    /**
+     * 查询所属班级
+     *
+     * @return
+     */
+    @AutoLog(value = "培训班学生关系-查询所属班级")
+    @ApiOperation(value = "培训班学生关系-查询所属班级", notes = "培训班学生关系-查询所属班级")
+    @GetMapping(value = "/queryClass")
+    public Result<?> queryClass(String username) {
+
+        List<TrainingClassStudent> students = trainingClassStudentService.lambdaQuery()
+                .eq(TrainingClassStudent::getUsername, username).list();
+        List<TrainingClassTeacher> teachers = trainingClassTeacherService.lambdaQuery()
+                .eq(TrainingClassTeacher::getUsername, username).list();
+        List<String> studentClass = students.stream().map(TrainingClassStudent::getClassNo).collect(Collectors.toList());
+        List<String> teacherClass = teachers.stream().map(TrainingClassTeacher::getClassNo).collect(Collectors.toList());
+        studentClass.addAll(teacherClass);
+        LinkedHashSet<String> classSet = new LinkedHashSet<>(studentClass);
+        List<String> classNoList = new LinkedList<>(classSet);
+        if (classNoList.size() > 0) {
+            List<DictModel> dictModels = sysDictService.queryTableDictTextByKeys("training_class", "name", "no", classNoList);
+            return Result.OK(dictModels.stream().map(DictModel::getText).collect(Collectors.joining(",")));
+        } else {
+            return Result.OK("暂不属于任何培训班");
+        }
     }
 
 }

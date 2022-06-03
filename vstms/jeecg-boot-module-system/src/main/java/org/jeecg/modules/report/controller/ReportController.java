@@ -1,0 +1,13 @@
+package org.jeecg.modules.report;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@Api(tags = "报表接口")
+@RestController
+@RequestMapping("/sys/report/")
+public class ReportController {
+}

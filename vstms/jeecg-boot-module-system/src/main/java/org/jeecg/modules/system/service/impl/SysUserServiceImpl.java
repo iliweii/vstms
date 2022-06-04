@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
-	
+
 	@Autowired
 	private SysUserMapper userMapper;
 	@Autowired
@@ -122,8 +122,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public SysUser getUserByName(String username) {
 		return userMapper.getUserByName(username);
 	}
-	
-	
+
+
 	@Override
 	@Transactional
 	public void addUserWithRole(SysUser user, String roles) {
@@ -158,7 +158,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public List<String> getRole(String username) {
 		return sysUserRoleMapper.getRoleByUserName(username);
 	}
-	
+
 	/**
 	 * 通过用户名获取用户角色集合
 	 * @param username 用户名
@@ -202,7 +202,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 //		SysUser user = userMapper.getUserByName(username);
 //		info.setSysUserCode(user.getUsername());
 //		info.setSysUserName(user.getRealname());
-		
+
 
 		LoginUser user = sysBaseAPI.getUserByName(username);
 		if(user!=null) {
@@ -210,7 +210,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			info.setSysUserName(user.getRealname());
 			info.setSysOrgCode(user.getOrgCode());
 		}
-		
+
 		//多部门支持in查询
 		List<SysDepart> list = sysDepartMapper.queryUserDeparts(user.getId());
 		List<String> sysMultiOrgCode = new ArrayList<String>();
@@ -226,7 +226,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			}
 		}
 		info.setSysMultiOrgCode(sysMultiOrgCode);
-		
+
 		return info;
 	}
 
@@ -486,48 +486,48 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		this.updateById(user);
 		//step.2 修改角色
 		//处理用户角色 先删后加
-		sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, user.getId()));
-		if(oConvertUtils.isNotEmpty(roles)) {
-			String[] arr = roles.split(",");
-			for (String roleId : arr) {
-				SysUserRole userRole = new SysUserRole(user.getId(), roleId);
-				sysUserRoleMapper.insert(userRole);
-			}
-		}
-
-		//step.3 修改部门
-		String[] arr = {};
-		if(oConvertUtils.isNotEmpty(departs)){
-			arr = departs.split(",");
-		}
-		//查询已关联部门
-		List<SysUserDepart> userDepartList = sysUserDepartMapper.selectList(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
-		if(userDepartList != null && userDepartList.size()>0){
-			for(SysUserDepart depart : userDepartList ){
-				//修改已关联部门删除部门用户角色关系
-				if(!Arrays.asList(arr).contains(depart.getDepId())){
-					List<SysDepartRole> sysDepartRoleList = sysDepartRoleMapper.selectList(
-							new QueryWrapper<SysDepartRole>().lambda().eq(SysDepartRole::getDepartId,depart.getDepId()));
-					List<String> roleIds = sysDepartRoleList.stream().map(SysDepartRole::getId).collect(Collectors.toList());
-					if(roleIds != null && roleIds.size()>0){
-						departRoleUserMapper.delete(new QueryWrapper<SysDepartRoleUser>().lambda().eq(SysDepartRoleUser::getUserId, user.getId())
-								.in(SysDepartRoleUser::getDroleId,roleIds));
-					}
-				}
-			}
-		}
-		//先删后加
-		sysUserDepartMapper.delete(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
-		if(oConvertUtils.isNotEmpty(departs)) {
-			for (String departId : arr) {
-				SysUserDepart userDepart = new SysUserDepart(user.getId(), departId);
-				sysUserDepartMapper.insert(userDepart);
-			}
-		}
-		//step.4 修改手机号和邮箱
-		// 更新手机号、邮箱空字符串为 null
-		userMapper.updateNullByEmptyString("email");
-		userMapper.updateNullByEmptyString("phone");
+//		sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, user.getId()));
+//		if(oConvertUtils.isNotEmpty(roles)) {
+//			String[] arr = roles.split(",");
+//			for (String roleId : arr) {
+//				SysUserRole userRole = new SysUserRole(user.getId(), roleId);
+//				sysUserRoleMapper.insert(userRole);
+//			}
+//		}
+//
+//		//step.3 修改部门
+//		String[] arr = {};
+//		if(oConvertUtils.isNotEmpty(departs)){
+//			arr = departs.split(",");
+//		}
+//		//查询已关联部门
+//		List<SysUserDepart> userDepartList = sysUserDepartMapper.selectList(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
+//		if(userDepartList != null && userDepartList.size()>0){
+//			for(SysUserDepart depart : userDepartList ){
+//				//修改已关联部门删除部门用户角色关系
+//				if(!Arrays.asList(arr).contains(depart.getDepId())){
+//					List<SysDepartRole> sysDepartRoleList = sysDepartRoleMapper.selectList(
+//							new QueryWrapper<SysDepartRole>().lambda().eq(SysDepartRole::getDepartId,depart.getDepId()));
+//					List<String> roleIds = sysDepartRoleList.stream().map(SysDepartRole::getId).collect(Collectors.toList());
+//					if(roleIds != null && roleIds.size()>0){
+//						departRoleUserMapper.delete(new QueryWrapper<SysDepartRoleUser>().lambda().eq(SysDepartRoleUser::getUserId, user.getId())
+//								.in(SysDepartRoleUser::getDroleId,roleIds));
+//					}
+//				}
+//			}
+//		}
+//		//先删后加
+//		sysUserDepartMapper.delete(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
+//		if(oConvertUtils.isNotEmpty(departs)) {
+//			for (String departId : arr) {
+//				SysUserDepart userDepart = new SysUserDepart(user.getId(), departId);
+//				sysUserDepartMapper.insert(userDepart);
+//			}
+//		}
+//		//step.4 修改手机号和邮箱
+//		// 更新手机号、邮箱空字符串为 null
+//		userMapper.updateNullByEmptyString("email");
+//		userMapper.updateNullByEmptyString("phone");
 
 	}
 

@@ -59,7 +59,7 @@
       </a-table>
 
       <!-- 区域-begin -->
-      <div v-if="queryParam.classNo" :style="{ display: 'flex' }">
+      <div v-if="queryParam.classNo" :style="{ display: 'flex', flexWrap: 'wrap' }">
         <div v-for="item in dataSource" :key="item.id" :style="{ padding: '5px 10px' }">
           <a-card hoverable style="width: 150px">
             <img slot="cover" alt="头像" :src="getAvatar(item.avatar)" v-if="item.avatar" />
@@ -148,6 +148,7 @@ export default {
   },
   mounted() {
     this.init()
+    this.loadData()
   },
   methods: {
     /**
@@ -171,6 +172,8 @@ export default {
       var params = this.getQueryParams() //查询条件
       // 将查询条件存储到本地
       if (params.classNo) Vue.ls.set('USER_QUERY_CLASS_NO', { classNo: params.classNo })
+      else return
+      
       this.loading = true
       getAction(this.url.list, params)
         .then((res) => {

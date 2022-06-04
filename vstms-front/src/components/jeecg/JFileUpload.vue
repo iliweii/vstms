@@ -95,7 +95,13 @@
     </a-modal>
 
     <!-- 视频预览模态框部分 -->
-    <a-modal :visible="previewVideoVisible" :footer="null" @cancel="handleCancel()" :width="1200">
+    <a-modal
+      :visible="previewVideoVisible"
+      :footer="null"
+      @cancel="handleCancel()"
+      :width="1200"
+      :key="previewVideo + previewVideoVisible"
+    >
       <video width="100%" controls>
         <source :src="previewVideo" type="video/mp4" />
         <source :src="previewVideo" type="video/ogg" />

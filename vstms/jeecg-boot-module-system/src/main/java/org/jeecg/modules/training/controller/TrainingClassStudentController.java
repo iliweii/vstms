@@ -117,6 +117,43 @@ public class TrainingClassStudentController extends JeecgController<TrainingClas
     }
 
     /**
+     * 选择学生列表
+     *
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    @AutoLog(value = "培训班学生关系-选择学生列表")
+    @ApiOperation(value = "培训班学生关系-选择学生列表", notes = "培训班学生关系-选择学生列表")
+    @GetMapping(value = "/userList2")
+    public Result<?> queryUserList2(SysUser sysUser, String classNo, String type,
+                                   @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                   @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                   HttpServletRequest req) {
+        QueryWrapper<SysUser> queryWrapper = QueryGenerator.initQueryWrapper(sysUser, req.getParameterMap());
+        Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);
+
+        String roleId;
+        List<String> usernameLists = new LinkedList<>();
+        if ("student".equals(type)) {
+            roleId = "1528588585151340546";
+            List<TrainingClassStudent> students = trainingClassStudentService.lambdaQuery().eq(TrainingClassStudent::getClassNo, classNo).list();
+            usernameLists = students.stream().map(TrainingClassStudent::getUsername).collect(Collectors.toList());
+        } else {
+            // teacher
+            roleId = "1528588674632622082";
+            List<TrainingClassTeacher> teachers = trainingClassTeacherService.lambdaQuery().eq(TrainingClassTeacher::getClassNo, classNo).list();
+            usernameLists = teachers.stream().map(TrainingClassTeacher::getUsername).collect(Collectors.toList());
+        }
+
+        if (usernameLists.size() > 0) queryWrapper.in("username", usernameLists);
+
+        IPage<SysUser> pageList = sysUserService.page(page, queryWrapper);
+        return Result.OK(pageList);
+    }
+
+    /**
      * 编辑
      *
      * @param trainingClassStudent

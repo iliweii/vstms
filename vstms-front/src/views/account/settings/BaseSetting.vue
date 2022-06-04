@@ -91,7 +91,7 @@ export default {
       editing: false,
       model: {},
       url: {
-        edit: '/sys/user/edit',
+        edit: '/sys/user/edit2',
       },
     }
   },

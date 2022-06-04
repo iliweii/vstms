@@ -133,7 +133,7 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       url: {
-        list: '/training/trainingClassStudent/userList',
+        list: '/training/trainingClassStudent/userList2',
       },
     }
   },

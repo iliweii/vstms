@@ -94,7 +94,7 @@ export default {
             .then((res) => {
               if (res.success) {
                 that.$message.success(res.message)
-                // that.$emit('ok')
+                that.$emit('ok')
                 // 反显数据
                 that.model = Object.assign({}, res.result)
               } else {

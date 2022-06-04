@@ -189,6 +189,12 @@ public class SysUserController {
         return result;
     }
 
+    @RequestMapping(value = "/edit2", method = RequestMethod.PUT)
+    public Result<?> edit2(@RequestBody SysUser sysUser) {
+        this.sysUserService.updateById(sysUser);
+        return Result.OK("编辑成功", sysUser);
+    }
+
     /**
      * 删除用户
      */

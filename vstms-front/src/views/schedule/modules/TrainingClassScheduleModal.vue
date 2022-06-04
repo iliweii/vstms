@@ -81,13 +81,11 @@ export default {
       url: {
         add: '/training/trainingClassSchedule/add',
         edit: '/training/trainingClassSchedule/edit',
-        teacherList: '/training/trainingClassStudent/userList', // 教师列表
+        teacherList: '/training/trainingClassStudent/userList2', // 教师列表
       },
     }
   },
-  created() {
-    this.getTeacherList()
-  },
+  created() {},
   methods: {
     add() {
       //初始化默认值
@@ -95,6 +93,7 @@ export default {
     },
     edit(record) {
       this.model = Object.assign({}, record)
+      this.getTeacherList()
       this.visible = true
     },
     close() {

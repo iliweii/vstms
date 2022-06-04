@@ -35,7 +35,7 @@ export default {
       modelValue: '',
       modelType: '', // 'p' 'e'
       url: {
-        edit: '/sys/user/edit',
+        edit: '/sys/user/edit2',
       },
 
       data: [

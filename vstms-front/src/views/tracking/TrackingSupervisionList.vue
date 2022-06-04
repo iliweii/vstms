@@ -226,6 +226,8 @@ export default {
       var params = this.getQueryParams() //查询条件
       // 将查询条件存储到本地
       if (params.classNo) Vue.ls.set('USER_QUERY_CLASS_NO', { classNo: params.classNo })
+      else return
+
       this.loading = true
       getAction(this.url.list, params)
         .then((res) => {

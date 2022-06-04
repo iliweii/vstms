@@ -210,6 +210,7 @@ export default {
   },
   created() {
     this.init()
+    this.loadData()
   },
   methods: {
     /**
@@ -218,7 +219,6 @@ export default {
     init() {
       // 将用户习惯的查询取出
       Object.assign(this.queryParam, Vue.ls.get('USER_QUERY_CLASS_NO'))
-      this.loadData()
     },
     /**
      * 加载数据
@@ -231,6 +231,8 @@ export default {
       var params = this.getQueryParams() //查询条件
       // 将查询条件存储到本地
       if (params.classNo) Vue.ls.set('USER_QUERY_CLASS_NO', { classNo: params.classNo })
+      else return
+      
       this.loading = true
       getAction(this.url.list, params)
         .then((res) => {

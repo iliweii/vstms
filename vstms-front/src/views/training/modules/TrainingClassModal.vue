@@ -3,22 +3,22 @@
     <a-spin :spinning="confirmLoading">
       <a-form-model ref="form" :model="model" :rules="validatorRules">
         <a-row>
-          <a-col>
+          <a-col :span="24">
             <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="no" label="编号">
               <a-input placeholder="编号自动生成" v-model="model.no" disabled />
             </a-form-model-item>
           </a-col>
-          <a-col>
+          <a-col :span="24">
             <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="name" label="名称">
               <a-input placeholder="请输入名称" v-model="model.name" :disabled="disableSubmit" />
             </a-form-model-item>
           </a-col>
-          <a-col :md="6">
+          <a-col :span="6">
             <a-form-model-item :labelCol="labelCol2" :wrapperCol="wrapperCol2" prop="period" label="课时">
               <a-input placeholder="请输入课时" suffix="时" v-model="model.period" :disabled="disableSubmit" />
             </a-form-model-item>
           </a-col>
-          <a-col :md="6">
+          <a-col :span="6">
             <a-form-model-item :labelCol="labelCol2" :wrapperCol="wrapperCol2" prop="price" label="价格">
               <a-input
                 placeholder="请输入价格"
@@ -29,22 +29,22 @@
               />
             </a-form-model-item>
           </a-col>
-          <a-col :md="6">
+          <a-col :span="6">
             <a-form-model-item :labelCol="labelCol2" :wrapperCol="wrapperCol2" prop="teacherNum" label="教师数量">
               <a-input placeholder="请输入教师数量" suffix="人" v-model="model.teacherNum" :disabled="disableSubmit" />
             </a-form-model-item>
           </a-col>
-          <a-col :md="6">
+          <a-col :span="6">
             <a-form-model-item :labelCol="labelCol2" :wrapperCol="wrapperCol2" prop="studentNum" label="学生数量">
               <a-input placeholder="请输入学生数量" suffix="人" v-model="model.studentNum" :disabled="disableSubmit" />
             </a-form-model-item>
           </a-col>
-          <a-col>
+          <a-col :span="24">
             <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="skillName" label="职业技能名称">
               <a-input placeholder="请输入职业技能" v-model="model.skillName" :disabled="disableSubmit" />
             </a-form-model-item>
           </a-col>
-          <a-col :md="24">
+          <a-col :span="24">
             <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" prop="description" label="描述">
               <a-textarea
                 v-model="model.description"

@@ -24,6 +24,7 @@
                  LEFT JOIN training_score s ON s.class_no = cs.class_no AND course_name = #{courseName}
         WHERE cs.class_no = #{classNo}
           AND cs.`status` = '1'
+          AND cs.username = s.username
     </select>
 
 </mapper>

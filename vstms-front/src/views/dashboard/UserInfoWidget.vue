@@ -2,7 +2,7 @@
   <a-card size="small" hoverable style="width: 100%; height: 100%">
     <a-row>
       <a-col :span="3" style="text-align: center">
-        <a-avatar shape="square" :size="128" icon="user" :src="user.avatar" />
+        <a-avatar shape="square" :size="128" icon="user" :src="getAvatar(user.avatar)" />
       </a-col>
       <a-col :span="12">
         <a-row :gutter="20">
@@ -59,7 +59,7 @@
 <script>
 import Vue from 'vue'
 import { USER_INFO, ENHANCE_PRE } from '@/store/mutation-types'
-import { getAction } from '@api/manage'
+import { getFileAccessHttpUrl, getAction } from '@/api/manage'
 
 export default {
   name: 'UserInfoWidget',
@@ -91,6 +91,9 @@ export default {
       getAction('/sys/user/queryUserRoleName', { userid: this.user.id }).then((res) => {
         this.roleName = res.result
       })
+    },
+    getAvatar(avatar) {
+      return getFileAccessHttpUrl(avatar)
     },
   },
 }

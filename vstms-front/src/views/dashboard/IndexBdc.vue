@@ -60,45 +60,7 @@
     </a-row>
 
     <a-card :loading="loading" :bordered="false" :body-style="{ padding: '0' }">
-      <div class="salesCard">
-        <a-tabs default-active-key="1" size="large" :tab-bar-style="{ marginBottom: '24px', paddingLeft: '16px' }">
-          <a-tab-pane loading="true" tab="某个图" key="1">
-            <a-row>
-              <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <index-bar title="受理量统计" />
-              </a-col>
-              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <a-card
-                  title="快速开始 / 便捷导航"
-                  style="margin-bottom: 24px"
-                  :bordered="false"
-                  :body-style="{ padding: 0 }"
-                >
-                  <div class="item-group">
-                    <a-row>
-                      <a-col
-                        :class="'more-btn'"
-                        :span="12"
-                        v-for="(item, index) in registerTypeList"
-                        :key="'registerType' + index"
-                      >
-                        <a-button
-                          @click="goPage(index)"
-                          style="margin-bottom: 10px"
-                          size="small"
-                          type="primary"
-                          ghost
-                          >{{ item.text }}</a-button
-                        >
-                      </a-col>
-                    </a-row>
-                  </div>
-                </a-card>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-        </a-tabs>
-      </div>
+     <class-schedule></class-schedule>
     </a-card>
   </div>
 </template>
@@ -115,6 +77,7 @@ import DashChartDemo from '@/components/chart/DashChartDemo'
 import UserInfoWidget from './UserInfoWidget'
 import { getLoginfo, getVisitInfo } from '@/api/api'
 import { getAction, deleteAction, putAction, postAction, httpAction } from '@/api/manage'
+import ClassSchedule from '../schedule/TrainingClassScheduleList.vue'
 
 export default {
   name: 'IndexBdc',
@@ -128,6 +91,7 @@ export default {
     BarMultid,
     IndexBar,
     UserInfoWidget,
+    ClassSchedule
   },
   data() {
     return {
@@ -253,6 +217,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/ .page-header {
+  display: none;
+}
 .extra-wrapper {
   line-height: 55px;
   padding-right: 24px;

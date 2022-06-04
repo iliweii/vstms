@@ -62,7 +62,7 @@
       <div v-if="queryParam.classNo" :style="{ display: 'flex' }">
         <div v-for="item in dataSource" :key="item.id" :style="{ padding: '5px 10px' }">
           <a-card hoverable style="width: 150px">
-            <img slot="cover" alt="头像" :src="item.avatar" v-if="item.avatar" />
+            <img slot="cover" alt="头像" :src="getAvatar(item.avatar)" v-if="item.avatar" />
             <img
               slot="cover"
               alt="头像"
@@ -98,7 +98,7 @@ import Vue from 'vue'
 import '@/assets/less/TableExpand.less'
 import PageLayout from '@/components/page/PageLayout'
 import TrainingInsuranceModal from './modules/TrainingInsuranceModal'
-import { getAction } from '@/api/manage'
+import { getAction, getFileAccessHttpUrl } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
 export default {
@@ -156,6 +156,9 @@ export default {
     init() {
       // 将用户习惯的查询取出
       Object.assign(this.queryParam, Vue.ls.get('USER_QUERY_CLASS_NO'))
+    },
+    getAvatar(avatar) {
+      return getFileAccessHttpUrl(avatar)
     },
     /**
      * 加载数据

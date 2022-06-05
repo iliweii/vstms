@@ -60,9 +60,9 @@
               username: that.userList.username,
               password: that.model.password,
               smscode: that.userList.smscode,
-              phone: that.userList.phone,
+              email: that.userList.email,
             }
-            getAction("/sys/user/passwordChange", params).then((res) => {
+            getAction("/sys/user/passwordChangeByEmail", params).then((res) => {
               if (res.success) {
                 let userList = {
                   username: that.userList.username

@@ -1106,6 +1106,47 @@ public class SysUserController {
         }
     }
 
+    @GetMapping("/passwordChangeByEmail")
+    public Result<SysUser> passwordChangeByEmail(@RequestParam(name = "username") String username,
+                                          @RequestParam(name = "password") String password,
+                                          @RequestParam(name = "smscode") String smscode,
+                                          @RequestParam(name = "email") String email) {
+        Result<SysUser> result = new Result<SysUser>();
+        if (oConvertUtils.isEmpty(username) || oConvertUtils.isEmpty(password) || oConvertUtils.isEmpty(smscode) || oConvertUtils.isEmpty(email)) {
+            result.setMessage("重置密码失败！");
+            result.setSuccess(false);
+            return result;
+        }
+
+        SysUser sysUser = new SysUser();
+        Object object = redisUtil.get(email);
+        if (null == object) {
+            result.setMessage("邮箱验证码失效！");
+            result.setSuccess(false);
+            return result;
+        }
+        if (!smscode.equals(object.toString())) {
+            result.setMessage("邮箱验证码不匹配！");
+            result.setSuccess(false);
+            return result;
+        }
+        sysUser = this.sysUserService.getOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, username).eq(SysUser::getEmail, email));
+        if (sysUser == null) {
+            result.setMessage("未找到用户！");
+            result.setSuccess(false);
+            return result;
+        } else {
+            String salt = oConvertUtils.randomGen(8);
+            sysUser.setSalt(salt);
+            String passwordEncode = PasswordUtil.encrypt(sysUser.getUsername(), password, salt);
+            sysUser.setPassword(passwordEncode);
+            this.sysUserService.updateById(sysUser);
+            result.setSuccess(true);
+            result.setMessage("密码重置完成！");
+            return result;
+        }
+    }
+
 
     /**
      * 根据TOKEN获取用户的部分信息（返回的数据是可供表单设计器使用的数据）
